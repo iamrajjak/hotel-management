@@ -167,14 +167,14 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Ensure database schema in Development environment
-if (app.Environment.IsDevelopment())
+// Ensure database schema in all environments (Development & Production Docker)
+using (var scope = app.Services.CreateScope())
 {
-    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
     try
     {
+        db.Database.EnsureCreated();
         DbInitializer.Initialize(db, hasher);
 
         var conn = db.Database.GetDbConnection();
