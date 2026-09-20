@@ -1,0 +1,17 @@
+{
+  "name": "Hotel Management System",
+  "short_name": "Hotel App",
+  "description": "Enterprise Hotel Management System & Hospitality Control Console",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

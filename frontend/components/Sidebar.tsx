@@ -69,7 +69,7 @@ export default function Sidebar({
   const isOwner = isSuperAdmin || normalizedRole === 'HOTELOWNER' || normalizedRole === 'OWNER' || normalizedRole === 'ADMIN';
 
   const displayUserRole = isSuperAdmin ? 'SuperAdmin' : (isOwner ? 'HotelOwner' : (storedRole || userRole || 'StaffManager'));
-  const displayHotelName = hotelName || currentUser?.hotelName || 'Royal Stay Hotels & Resorts';
+  const displayHotelName = hotelName || currentUser?.hotelName || 'Hotel Management System';
 
   const navItems = [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },

@@ -189,7 +189,7 @@ export default function Header({
   const isSuperAdmin = currentUser?.isSuperAdmin === true || currentUser?.isSuperAdmin === 1 || currentUser?.isSuperAdmin === '1' || currentUser?.role === 'SuperAdmin' || userRole === 'SuperAdmin';
   const displayUserName = userName || currentUser?.fullName || (isSuperAdmin ? 'SaaS Administrator' : 'Hotel Admin');
   const displayUserRole = isSuperAdmin ? 'SUPERADMIN' : (userRole || currentUser?.role || 'HOTEL OWNER');
-  const displayHotelName = hotelName || currentUser?.hotelName || 'Royal Stay Hotels & Resorts';
+  const displayHotelName = hotelName || currentUser?.hotelName || 'Hotel Management System';
 
   const handleLogout = () => {
     authApi.logout();

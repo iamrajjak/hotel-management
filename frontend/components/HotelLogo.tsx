@@ -17,7 +17,7 @@ export default function HotelLogo({
   subTitle = 'LUXURY HOTEL & RESORTS',
   className = '',
 }: HotelLogoProps) {
-  const [dynamicHotelName, setDynamicHotelName] = useState<string>(propHotelName || 'ROYAL STAY');
+  const [dynamicHotelName, setDynamicHotelName] = useState<string>(propHotelName || 'HOTEL MANAGEMENT');
 
   useEffect(() => {
     if (propHotelName) {
@@ -40,9 +40,9 @@ export default function HotelLogo({
     }
   }, [propHotelName]);
 
-  // Compute initials dynamically from Hotel Name (e.g. "Grand Palace" -> "GP", "Royal Stay" -> "RS")
+  // Compute initials dynamically from Hotel Name (e.g. "Hotel Management" -> "HM")
   const computeInitials = (name: string): string => {
-    if (!name) return 'RS';
+    if (!name) return 'HM';
     const clean = name.trim();
     // Filter out common filler words for sharper initials
     const words = clean.split(/\s+/).filter(w => !['and', '&', 'the', 'of'].includes(w.toLowerCase()));

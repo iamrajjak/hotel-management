@@ -13,8 +13,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rajjak Luxury Hotel | Hotel Management SaaS",
+  title: "Hotel Management System | Enterprise Hospitality Console",
   description: "Enterprise Hotel Management System & Hospitality Control Console",
+  manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: ["/favicon.svg"],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Hotel Management",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

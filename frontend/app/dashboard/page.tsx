@@ -207,7 +207,7 @@ export default function RoyalStayDashboard() {
                   <Sparkles className="w-3 h-3 text-indigo-300" /> Executive Hospitality Engine
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">Royal Stay Hospitality Overview</h1>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">Hotel Management Overview</h1>
               <p className="text-indigo-200 text-xs sm:text-sm font-medium">Realtime Property Analytics • Live Guest Occupancy & Revenue Breakdown</p>
             </div>
 

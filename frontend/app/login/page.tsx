@@ -161,7 +161,7 @@ export default function AdminLoginPage() {
       <div className="relative bg-gradient-to-br from-indigo-950 via-purple-900 to-slate-950 p-12 flex flex-col justify-between text-white overflow-hidden shadow-2xl">
         <Image
           src="/images/resort-hero.jpg"
-          alt="Royal Stay Resort"
+          alt="Hotel Management Resort"
           fill
           className="object-cover opacity-20"
         />
@@ -171,8 +171,8 @@ export default function AdminLoginPage() {
             <Crown className="w-7 h-7 fill-slate-950" />
           </div>
           <div>
-            <h1 className="font-extrabold text-xl tracking-wider text-white uppercase">ROYAL STAY</h1>
-            <p className="text-xs text-amber-400 font-bold uppercase tracking-widest">HOTELS & RESORTS</p>
+            <h1 className="font-extrabold text-xl tracking-wider text-white uppercase">HOTEL MANAGEMENT</h1>
+            <p className="text-xs text-amber-400 font-bold uppercase tracking-widest">ENTERPRISE SYSTEM</p>
           </div>
         </div>
 
@@ -189,7 +189,7 @@ export default function AdminLoginPage() {
         </div>
 
         <div className="relative z-10 text-xs text-slate-400 font-medium">
-          © 2026 Royal Stay Hotels & Resorts. All rights reserved.
+          © 2026 Hotel Management System. All rights reserved.
         </div>
       </div>
 
