@@ -1,0 +1,25 @@
+# Node / Next.js dependencies and build
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# .NET build output & IDE
+bin/
+obj/
+.vs/
+.idea/
+.vscode/
+
+# Database files
+*.db
+*.sqlite
+hotelsaas.db
+
+# Logs & Environment
+*.log
+.env
+.env.local
+.env.production
+.vercel

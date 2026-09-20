@@ -1,0 +1,1325 @@
+{
+  "backendHardcodes": [
+    {
+      "file": "backend\\.vs\\HotelSaaS\\v17\\DocumentLayout.backup.json",
+      "lineNum": 6,
+      "pattern": "hotel-",
+      "text": "\"AbsoluteMoniker\": \"D:0:0:{7C84789B-369F-406D-8EF0-FE871C74DE0D}|HotelSaaS.Api\\\\HotelSaaS.Api.csproj|e:\\\\project\\\\hotel-management\\\\backend\\\\hotelsaas.api\\\\controllers\\\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\","
+    },
+    {
+      "file": "backend\\.vs\\HotelSaaS\\v17\\DocumentLayout.backup.json",
+      "lineNum": 10,
+      "pattern": "hotel-",
+      "text": "\"AbsoluteMoniker\": \"D:0:0:{7C84789B-369F-406D-8EF0-FE871C74DE0D}|HotelSaaS.Api\\\\HotelSaaS.Api.csproj|e:\\\\project\\\\hotel-management\\\\backend\\\\hotelsaas.api\\\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}\","
+    },
+    {
+      "file": "backend\\.vs\\HotelSaaS\\v17\\DocumentLayout.json",
+      "lineNum": 6,
+      "pattern": "hotel-",
+      "text": "\"AbsoluteMoniker\": \"D:0:0:{7C84789B-369F-406D-8EF0-FE871C74DE0D}|HotelSaaS.Api\\\\HotelSaaS.Api.csproj|e:\\\\project\\\\hotel-management\\\\backend\\\\hotelsaas.api\\\\controllers\\\\roomscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\","
+    },
+    {
+      "file": "backend\\.vs\\HotelSaaS\\v17\\DocumentLayout.json",
+      "lineNum": 10,
+      "pattern": "hotel-",
+      "text": "\"AbsoluteMoniker\": \"D:0:0:{7C84789B-369F-406D-8EF0-FE871C74DE0D}|HotelSaaS.Api\\\\HotelSaaS.Api.csproj|e:\\\\project\\\\hotel-management\\\\backend\\\\hotelsaas.api\\\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}\","
+    },
+    {
+      "file": "backend\\HotelSaaS.Api\\Controllers\\InvoicesController.cs",
+      "lineNum": 151,
+      "pattern": "hotel-",
+      "text": ".hotel-title {{ font-size: 24px; font-weight: 700; color: #0f172a; margin: 0 0 4px 0; }}"
+    },
+    {
+      "file": "backend\\HotelSaaS.Api\\Controllers\\InvoicesController.cs",
+      "lineNum": 180,
+      "pattern": "hotel-",
+      "text": "<h1 class=\"\"hotel-title\"\">{hotel?.Name ?? \"Grand Palace Resort\"}</h1>"
+    },
+    {
+      "file": "backend\\HotelSaaS.Api\\Middleware\\TenantMiddleware.cs",
+      "lineNum": 28,
+      "pattern": "Guid.Empty",
+      "text": "if (hotelId != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Api\\Middleware\\TenantMiddleware.cs",
+      "lineNum": 34,
+      "pattern": "Guid.Empty",
+      "text": "tenantContext.SetTenant(Guid.Empty, userId, roleClaim, true);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Api\\Middleware\\TenantMiddleware.cs",
+      "lineNum": 41,
+      "pattern": "Guid.Empty",
+      "text": "tenantContext.SetTenant(Guid.Empty, Guid.Empty, \"Guest\", false);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Application\\DTOs\\HotelRoomDtos.cs",
+      "lineNum": 112,
+      "pattern": "Guid.Empty",
+      "text": "public Guid Id { get; set; } = Guid.Empty;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Application\\DTOs\\HotelRoomDtos.cs",
+      "lineNum": 113,
+      "pattern": "Guid.Empty",
+      "text": "public Guid RoomTypeId { get; set; } = Guid.Empty;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Application\\DTOs\\ReservationDtos.cs",
+      "lineNum": 39,
+      "pattern": "Guid.Empty",
+      "text": "public Guid RoomId { get; set; } = Guid.Empty;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\ApplicationDbContext.cs",
+      "lineNum": 105,
+      "pattern": "Guid.Empty",
+      "text": "(_tenantContext.HotelId.HasValue && _tenantContext.HotelId.Value != Guid.Empty && e.HotelId == _tenantContext.HotelId.Value));"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\ApplicationDbContext.cs",
+      "lineNum": 124,
+      "pattern": "Guid.Empty",
+      "text": "if (baseEntity.Id == Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\ApplicationDbContext.cs",
+      "lineNum": 173,
+      "pattern": "Guid.Empty",
+      "text": "if (tenantEntity.HotelId != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\ApplicationDbContext.cs",
+      "lineNum": 184,
+      "pattern": "Guid.Empty",
+      "text": "if (hotelUser.HotelId != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 20,
+      "pattern": "Guid.Parse",
+      "text": "Id = Guid.Parse(\"00000000-0000-0000-0000-000000000001\"),"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 45,
+      "pattern": "Guid.Parse",
+      "text": "var fallbackId = Guid.Parse(\"11111111-1111-1111-1111-111111111111\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 79,
+      "pattern": "Guid.Parse",
+      "text": "Id = Guid.Parse(\"00000000-0000-0000-0001-000000000002\"),"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 101,
+      "pattern": "Guid.Parse",
+      "text": "Id = Guid.Parse(\"00000000-0000-0000-0001-000000000003\"),"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 134,
+      "pattern": "Guid.Parse",
+      "text": "db.HotelUsers.Add(new HotelUser { Id = Guid.Parse(\"00000000-0000-0000-0001-000000000100\"), HotelId = targetHotelId, HotelCode = \"HTL-001\", UserId = owner.Id, Role = UserRole.HotelOwner, Status = true });"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 139,
+      "pattern": "Guid.Parse",
+      "text": "db.HotelUsers.Add(new HotelUser { Id = Guid.Parse(\"00000000-0000-0000-0001-000000000101\"), HotelId = targetHotelId, HotelCode = \"HTL-001\", UserId = manager.Id, Role = UserRole.Manager, Status = true });"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 144,
+      "pattern": "Guid.Empty",
+      "text": "var orphanedRoomTypes = db.RoomTypes.IgnoreQueryFilters().Where(rt => rt.HotelId == fallbackId || rt.HotelId == Guid.Empty).ToList();"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 147,
+      "pattern": "Guid.Empty",
+      "text": "var orphanedRooms = db.Rooms.IgnoreQueryFilters().Where(r => r.HotelId == fallbackId || r.HotelId == Guid.Empty).ToList();"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 150,
+      "pattern": "Guid.Empty",
+      "text": "var orphanedCustomers = db.Customers.IgnoreQueryFilters().Where(c => c.HotelId == fallbackId || c.HotelId == Guid.Empty).ToList();"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 153,
+      "pattern": "Guid.Empty",
+      "text": "var orphanedReservations = db.Reservations.IgnoreQueryFilters().Where(res => res.HotelId == fallbackId || res.HotelId == Guid.Empty).ToList();"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 162,
+      "pattern": "Guid.Parse",
+      "text": "var deluxe = new RoomType { Id = Guid.Parse(\"00000000-0000-0000-0002-000000000001\"), HotelId = targetHotelId, Name = \"Deluxe Queen Room\", Slug = \"deluxe-queen-room\", BasePrice = 2500, MaxAdults = 2, MaxChildren = 1, BedType = \"King\", Status = \"Active\" };"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 163,
+      "pattern": "Guid.Parse",
+      "text": "var suite = new RoomType { Id = Guid.Parse(\"00000000-0000-0000-0002-000000000002\"), HotelId = targetHotelId, Name = \"Executive Suite\", Slug = \"executive-suite\", BasePrice = 5000, MaxAdults = 2, MaxChildren = 2, BedType = \"King Suite\", Status = \"Active\" };"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 164,
+      "pattern": "Guid.Parse",
+      "text": "var standard = new RoomType { Id = Guid.Parse(\"00000000-0000-0000-0002-000000000003\"), HotelId = targetHotelId, Name = \"Standard Twin Room\", Slug = \"standard-twin-room\", BasePrice = 1800, MaxAdults = 2, MaxChildren = 0, BedType = \"Double Twin\", Status = \"Active\" };"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 179,
+      "pattern": "Guid.Parse",
+      "text": "var r101 = new Room { Id = Guid.Parse(\"00000000-0000-0000-0003-000000000101\"), HotelId = targetHotelId, RoomTypeId = deluxeType.Id, RoomNumber = \"101\", Floor = \"1st Floor\", Price = 2500, Status = RoomStatus.Available, Notes = \"Beach view deluxe room\" };"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 180,
+      "pattern": "Guid.Parse",
+      "text": "var r102 = new Room { Id = Guid.Parse(\"00000000-0000-0000-0003-000000000102\"), HotelId = targetHotelId, RoomTypeId = deluxeType.Id, RoomNumber = \"102\", Floor = \"1st Floor\", Price = 2500, Status = RoomStatus.Occupied, Notes = \"Garden view deluxe room\" };"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 181,
+      "pattern": "Guid.Parse",
+      "text": "var r103 = new Room { Id = Guid.Parse(\"00000000-0000-0000-0003-000000000103\"), HotelId = targetHotelId, RoomTypeId = standardType.Id, RoomNumber = \"103\", Floor = \"1st Floor\", Price = 1800, Status = RoomStatus.Available, Notes = \"Cozy twin bed room\" };"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 182,
+      "pattern": "Guid.Parse",
+      "text": "var r201 = new Room { Id = Guid.Parse(\"00000000-0000-0000-0003-000000000201\"), HotelId = targetHotelId, RoomTypeId = suiteType.Id, RoomNumber = \"201\", Floor = \"2nd Floor\", Price = 5000, Status = RoomStatus.Reserved, Notes = \"Penthouse suite with Jacuzzi\" };"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 183,
+      "pattern": "Guid.Parse",
+      "text": "var r202 = new Room { Id = Guid.Parse(\"00000000-0000-0000-0003-000000000202\"), HotelId = targetHotelId, RoomTypeId = suiteType.Id, RoomNumber = \"202\", Floor = \"2nd Floor\", Price = 5000, Status = RoomStatus.Available, Notes = \"Executive suite\" };"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 194,
+      "pattern": "Guid.Parse",
+      "text": "var cust1 = new Customer { Id = Guid.Parse(\"00000000-0000-0000-0004-000000000001\"), HotelId = targetHotelId, FullName = \"Ramesh Patel\", Email = \"ramesh.patel@gmail.com\", Phone = \"+91 9876543210\", City = \"Mumbai\", State = \"Maharashtra\", Country = \"India\" };"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 195,
+      "pattern": "Guid.Parse",
+      "text": "var cust2 = new Customer { Id = Guid.Parse(\"00000000-0000-0000-0004-000000000002\"), HotelId = targetHotelId, FullName = \"Siddharth Verma\", Email = \"siddharth@gmail.com\", Phone = \"+91 9812345678\", City = \"Delhi\", State = \"Delhi\", Country = \"India\" };"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 231,
+      "pattern": "Guid.Parse",
+      "text": "Id = Guid.Parse(\"00000000-0000-0000-0005-000000001001\"),"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\DbInitializer.cs",
+      "lineNum": 254,
+      "pattern": "Guid.Parse",
+      "text": "Id = Guid.Parse(\"00000000-0000-0000-0005-000000001002\"),"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\Repositories\\RoomRepository.cs",
+      "lineNum": 17,
+      "pattern": "Guid.Empty",
+      "text": "if (hotelId != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\Repositories\\RoomRepository.cs",
+      "lineNum": 42,
+      "pattern": "Guid.Empty",
+      "text": "if (hotelId != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\Repositories\\RoomRepository.cs",
+      "lineNum": 58,
+      "pattern": "Guid.Empty",
+      "text": "if (hotelId != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\Repositories\\RoomRepository.cs",
+      "lineNum": 78,
+      "pattern": "Guid.Empty",
+      "text": "if (roomTypeId != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\Repositories\\RoomRepository.cs",
+      "lineNum": 82,
+      "pattern": "Guid.Empty",
+      "text": ".FirstOrDefaultAsync(rt => (hotelId == Guid.Empty || rt.HotelId == hotelId) && rt.Id == roomTypeId);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\Repositories\\RoomRepository.cs",
+      "lineNum": 95,
+      "pattern": "Guid.Empty",
+      "text": ".FirstOrDefaultAsync(rt => (hotelId == Guid.Empty || rt.HotelId == hotelId) &&"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Persistence\\Repositories\\RoomRepository.cs",
+      "lineNum": 114,
+      "pattern": "Guid.Empty",
+      "text": "if (roomType.Id == Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\CustomerService.cs",
+      "lineNum": 49,
+      "pattern": "Guid.Empty",
+      "text": "var targetHotelId = _tenantContext.HotelId ?? Guid.Empty;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\CustomerService.cs",
+      "lineNum": 55,
+      "pattern": "Guid.Parse",
+      "text": "var custGuid = Guid.Parse($\"00000000-0000-0000-0004-{custCount:D12}\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\HousekeepingService.cs",
+      "lineNum": 37,
+      "pattern": "Guid.Parse",
+      "text": "var targetHotelId = _tenantContext.HotelId ?? Guid.Parse(\"11111111-1111-1111-1111-111111111111\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\HousekeepingService.cs",
+      "lineNum": 38,
+      "pattern": "royal-stay",
+      "text": "var hotel = await _db.Hotels.IgnoreQueryFilters().FirstOrDefaultAsync(h => h.Id == targetHotelId || h.Slug == \"royal-stay\")"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\InventoryService.cs",
+      "lineNum": 24,
+      "pattern": "Guid.Parse",
+      "text": "var targetHotelId = _tenantContext.HotelId ?? Guid.Parse(\"11111111-1111-1111-1111-111111111111\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\InventoryService.cs",
+      "lineNum": 25,
+      "pattern": "royal-stay",
+      "text": "var hotel = await _db.Hotels.IgnoreQueryFilters().FirstOrDefaultAsync(h => h.Id == targetHotelId || h.Slug == \"royal-stay\")"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\InventoryService.cs",
+      "lineNum": 42,
+      "pattern": "Guid.Parse",
+      "text": "var targetHotelId = _tenantContext.HotelId ?? Guid.Parse(\"11111111-1111-1111-1111-111111111111\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\InventoryService.cs",
+      "lineNum": 43,
+      "pattern": "royal-stay",
+      "text": "var hotel = await _db.Hotels.IgnoreQueryFilters().FirstOrDefaultAsync(h => h.Id == targetHotelId || h.Slug == \"royal-stay\")"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\InvoiceService.cs",
+      "lineNum": 44,
+      "pattern": "Guid.Empty",
+      "text": "if (!isSuperAdmin && currentHotelId.HasValue && currentHotelId.Value != Guid.Empty && r.HotelId != currentHotelId.Value)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\PaymentService.cs",
+      "lineNum": 47,
+      "pattern": "Guid.Empty",
+      "text": "if (!isSuperAdmin && currentHotelId.HasValue && currentHotelId.Value != Guid.Empty && r.HotelId != currentHotelId.Value)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\PaymentService.cs",
+      "lineNum": 83,
+      "pattern": "Guid.Empty",
+      "text": "var targetHotelId = (_tenantContext.HotelId.HasValue && _tenantContext.HotelId.Value != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\PaymentService.cs",
+      "lineNum": 85,
+      "pattern": "Guid.Empty",
+      "text": ": (r?.HotelId ?? Guid.Empty);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\PosService.cs",
+      "lineNum": 24,
+      "pattern": "Guid.Parse",
+      "text": "var targetHotelId = _tenantContext.HotelId ?? Guid.Parse(\"11111111-1111-1111-1111-111111111111\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\PosService.cs",
+      "lineNum": 25,
+      "pattern": "royal-stay",
+      "text": "var hotel = await _db.Hotels.IgnoreQueryFilters().FirstOrDefaultAsync(h => h.Id == targetHotelId || h.Slug == \"royal-stay\")"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\PosService.cs",
+      "lineNum": 74,
+      "pattern": "Guid.Parse",
+      "text": "var targetHotelId = _tenantContext.HotelId ?? Guid.Parse(\"11111111-1111-1111-1111-111111111111\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\PosService.cs",
+      "lineNum": 75,
+      "pattern": "royal-stay",
+      "text": "var hotel = await _db.Hotels.IgnoreQueryFilters().FirstOrDefaultAsync(h => h.Id == targetHotelId || h.Slug == \"royal-stay\")"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\ReservationService.cs",
+      "lineNum": 76,
+      "pattern": "Guid.Empty",
+      "text": "var hotelId = (_tenantContext.HotelId.HasValue && _tenantContext.HotelId.Value != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\ReservationService.cs",
+      "lineNum": 78,
+      "pattern": "Guid.Empty",
+      "text": ": (await _db.Hotels.IgnoreQueryFilters().FirstOrDefaultAsync(h => h.Slug == \"grand-palace\") ?? await _db.Hotels.IgnoreQueryFilters().FirstOrDefaultAsync())?.Id ?? Guid.Empty;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\ReservationService.cs",
+      "lineNum": 88,
+      "pattern": "Guid.Empty",
+      "text": "if (request.RoomId != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\ReservationService.cs",
+      "lineNum": 110,
+      "pattern": "Guid.Empty",
+      "text": "if (roomType.Id == Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\ReservationService.cs",
+      "lineNum": 147,
+      "pattern": "Guid.Empty",
+      "text": "if (request.CustomerId.HasValue && request.CustomerId.Value != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\ReservationService.cs",
+      "lineNum": 159,
+      "pattern": "Guid.Parse",
+      "text": "var custGuid = Guid.Parse($\"00000000-0000-0000-0004-{custCount:D12}\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\ReservationService.cs",
+      "lineNum": 182,
+      "pattern": "Guid.Parse",
+      "text": "var resGuid = Guid.Parse($\"00000000-0000-0000-0005-{nextBookingSeq:D12}\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\ReservationService.cs",
+      "lineNum": 371,
+      "pattern": "Guid.Empty",
+      "text": "parsedGuid != Guid.Empty ? parsedGuid : Guid.NewGuid(),"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\ReservationService.cs",
+      "lineNum": 465,
+      "pattern": "Guid.Empty",
+      "text": "parsedGuid != Guid.Empty ? parsedGuid : Guid.NewGuid(),"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\ReservationService.cs",
+      "lineNum": 507,
+      "pattern": "Guid.Empty",
+      "text": "parsedGuid != Guid.Empty ? parsedGuid : Guid.NewGuid(),"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 33,
+      "pattern": "Guid.Empty",
+      "text": "if (_tenantContext.HotelId.HasValue && _tenantContext.HotelId.Value != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 85,
+      "pattern": "Guid.Empty",
+      "text": "if (_tenantContext.HotelId.HasValue && _tenantContext.HotelId.Value != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 149,
+      "pattern": "Guid.Empty",
+      "text": "if (!isSuperAdmin && hotelId != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 158,
+      "pattern": "Guid.Empty",
+      "text": "var rooms = await _roomRepository.GetRoomsWithTypesAsync(isSuperAdmin ? Guid.Empty : hotelId);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 176,
+      "pattern": "Guid.Empty",
+      "text": "if (request.RoomTypeId != Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 179,
+      "pattern": "Guid.Empty",
+      "text": ".FirstOrDefaultAsync(x => x.Id == request.RoomTypeId && (hotelId == Guid.Empty || x.HotelId == hotelId));"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 186,
+      "pattern": "Guid.Empty",
+      "text": ".FirstOrDefaultAsync(x => x.Name.ToLower() == roomTypeNameInput.ToLower() && (hotelId == Guid.Empty || x.HotelId == hotelId));"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 201,
+      "pattern": "Guid.Parse",
+      "text": "var rtGuid = Guid.Parse($\"00000000-0000-0000-0002-{rtCount:D12}\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 232,
+      "pattern": "Guid.Empty",
+      "text": ".FirstOrDefaultAsync(r => (request.Id != Guid.Empty && r.Id == request.Id) || (r.HotelId == hotelId && r.RoomNumber.ToLower() == roomNumber.ToLower()));"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 283,
+      "pattern": "Guid.Empty",
+      "text": "Guid roomId = request.Id != Guid.Empty ? request.Id : Guid.Empty;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 284,
+      "pattern": "Guid.Empty",
+      "text": "if (roomId == Guid.Empty)"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 288,
+      "pattern": "Guid.Parse",
+      "text": "roomId = Guid.Parse($\"00000000-0000-0000-0003-{rNum:D12}\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 293,
+      "pattern": "Guid.Parse",
+      "text": "roomId = Guid.Parse($\"00000000-0000-0000-0003-{roomCount:D12}\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\RoomService.cs",
+      "lineNum": 394,
+      "pattern": "Guid.Empty",
+      "text": "var availableRooms = await _roomRepository.GetAvailableRoomsAsync(query.CheckInDate, query.CheckOutDate, query.Adults, isSuperAdmin ? Guid.Empty : hotelId);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 55,
+      "pattern": "hotel-",
+      "text": "if (string.IsNullOrWhiteSpace(raw)) return \"hotel-001\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 58,
+      "pattern": "hotel-",
+      "text": "return \"hotel-001\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 59,
+      "pattern": "hotel-",
+      "text": "if (trimmed.StartsWith(\"hotel-\")) return trimmed;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 69,
+      "pattern": "hotel-",
+      "text": "return $\"hotel-{num:D3}\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 75,
+      "pattern": "hotel-",
+      "text": "return \"hotel-\" + (s.Length > 6 ? s.Substring(0, 6) : s);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 80,
+      "pattern": "profile-",
+      "text": "if (email?.ToLower().Contains(\"admin\") == true || raw == \"00000000-0000-0000-0001-000000000001\") return \"profile-admin\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 80,
+      "pattern": "profile-admin",
+      "text": "if (email?.ToLower().Contains(\"admin\") == true || raw == \"00000000-0000-0000-0001-000000000001\") return \"profile-admin\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 81,
+      "pattern": "profile-",
+      "text": "if (email?.ToLower().Contains(\"owner\") == true || raw == \"00000000-0000-0000-0001-000000000002\") return \"profile-owner\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 81,
+      "pattern": "profile-owner",
+      "text": "if (email?.ToLower().Contains(\"owner\") == true || raw == \"00000000-0000-0000-0001-000000000002\") return \"profile-owner\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 82,
+      "pattern": "profile-",
+      "text": "if (email?.ToLower().Contains(\"manager\") == true || raw == \"00000000-0000-0000-0001-000000000003\") return \"profile-manager\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 83,
+      "pattern": "user-",
+      "text": "if (string.IsNullOrWhiteSpace(raw)) return \"user-001\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 85,
+      "pattern": "user-",
+      "text": "if (trimmed.StartsWith(\"profile-\") || trimmed.StartsWith(\"user-\")) return trimmed;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 85,
+      "pattern": "profile-",
+      "text": "if (trimmed.StartsWith(\"profile-\") || trimmed.StartsWith(\"user-\")) return trimmed;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 95,
+      "pattern": "user-",
+      "text": "return $\"user-{num:D3}\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 101,
+      "pattern": "user-",
+      "text": "return \"user-\" + (s.Length > 6 ? s.Substring(0, 6) : s);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 106,
+      "pattern": "hu-",
+      "text": "if (string.IsNullOrWhiteSpace(raw)) return \"hu-001\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 108,
+      "pattern": "hu-",
+      "text": "if (trimmed.StartsWith(\"hu-\")) return trimmed;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 118,
+      "pattern": "hu-",
+      "text": "return $\"hu-{num:D3}\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 124,
+      "pattern": "hu-",
+      "text": "return \"hu-\" + (s.Length > 6 ? s.Substring(0, 6) : s);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 127,
+      "pattern": "hotel-",
+      "text": "private static string CleanRoomTypeId(string? raw, string? name = null, string? slug = null, string? hId = \"hotel-001\")"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 129,
+      "pattern": "hotel-",
+      "text": "if (raw == \"00000000-0000-0000-0002-000000000001\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"type-deluxe-queen-room\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 129,
+      "pattern": "type-",
+      "text": "if (raw == \"00000000-0000-0000-0002-000000000001\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"type-deluxe-queen-room\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 130,
+      "pattern": "hotel-",
+      "text": "if (raw == \"00000000-0000-0000-0002-000000000002\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"type-executive-suite\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 130,
+      "pattern": "type-",
+      "text": "if (raw == \"00000000-0000-0000-0002-000000000002\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"type-executive-suite\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 131,
+      "pattern": "hotel-",
+      "text": "if (raw == \"00000000-0000-0000-0002-000000000003\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"type-standard-twin-room\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 131,
+      "pattern": "type-",
+      "text": "if (raw == \"00000000-0000-0000-0002-000000000003\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"type-standard-twin-room\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 133,
+      "pattern": "type-",
+      "text": "if (!string.IsNullOrWhiteSpace(raw) && raw.StartsWith(\"type-\")) return raw;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 139,
+      "pattern": "type-",
+      "text": "return $\"type-{baseSlug}\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 142,
+      "pattern": "hotel-",
+      "text": "private static string CleanRoomId(string? raw, string? roomNum = null, string? hId = \"hotel-001\")"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 145,
+      "pattern": "hotel-",
+      "text": "if (raw == \"00000000-0000-0000-0003-000000000101\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"room-101\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 145,
+      "pattern": "room-",
+      "text": "if (raw == \"00000000-0000-0000-0003-000000000101\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"room-101\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 146,
+      "pattern": "hotel-",
+      "text": "if (raw == \"00000000-0000-0000-0003-000000000102\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"room-102\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 146,
+      "pattern": "room-",
+      "text": "if (raw == \"00000000-0000-0000-0003-000000000102\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"room-102\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 147,
+      "pattern": "hotel-",
+      "text": "if (raw == \"00000000-0000-0000-0003-000000000103\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"room-103\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 147,
+      "pattern": "room-",
+      "text": "if (raw == \"00000000-0000-0000-0003-000000000103\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"room-103\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 148,
+      "pattern": "hotel-",
+      "text": "if (raw == \"00000000-0000-0000-0003-000000000201\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"room-201\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 148,
+      "pattern": "room-",
+      "text": "if (raw == \"00000000-0000-0000-0003-000000000201\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"room-201\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 149,
+      "pattern": "hotel-",
+      "text": "if (raw == \"00000000-0000-0000-0003-000000000202\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"room-202\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 149,
+      "pattern": "room-",
+      "text": "if (raw == \"00000000-0000-0000-0003-000000000202\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"room-202\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 151,
+      "pattern": "room-",
+      "text": "if (!string.IsNullOrWhiteSpace(raw) && raw.StartsWith(\"room-\")) return raw;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 161,
+      "pattern": "room-",
+      "text": "return $\"room-{n:D3}\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 168,
+      "pattern": "room-",
+      "text": "return $\"room-{num}\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 171,
+      "pattern": "room-",
+      "text": "if (string.IsNullOrWhiteSpace(raw)) return \"room-101\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 174,
+      "pattern": "room-",
+      "text": "return $\"room-{shortStr}\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 177,
+      "pattern": "hotel-",
+      "text": "private static string CleanCustomerId(string? raw, string? phone = null, string? hId = \"hotel-001\")"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 179,
+      "pattern": "hotel-",
+      "text": "if (raw == \"00000000-0000-0000-0004-000000000001\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"cust-001\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 180,
+      "pattern": "hotel-",
+      "text": "if (raw == \"00000000-0000-0000-0004-000000000002\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"cust-002\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 181,
+      "pattern": "user-",
+      "text": "if (!string.IsNullOrWhiteSpace(raw) && (raw.StartsWith(\"cust-\") || raw.StartsWith(\"user-\") || raw.StartsWith(\"profile-\"))) return raw;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 181,
+      "pattern": "profile-",
+      "text": "if (!string.IsNullOrWhiteSpace(raw) && (raw.StartsWith(\"cust-\") || raw.StartsWith(\"user-\") || raw.StartsWith(\"profile-\"))) return raw;"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 201,
+      "pattern": "hotel-",
+      "text": "private static string CleanReservationId(string? raw, string? bookingNum = null, string? hId = \"hotel-001\")"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 218,
+      "pattern": "hotel-",
+      "text": "if (raw == \"00000000-0000-0000-0005-000000001001\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"res-20260908-1001\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 219,
+      "pattern": "hotel-",
+      "text": "if (raw == \"00000000-0000-0000-0005-000000001002\" && (hId == \"hotel-001\" || string.IsNullOrEmpty(hId))) return \"res-20260908-1002\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 232,
+      "pattern": "hotel-",
+      "text": "if (input != null && input.StartsWith(\"hotel-\"))"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 237,
+      "pattern": "Guid.Parse",
+      "text": "return Guid.Parse($\"00000000-0000-0000-0000-{num:D12}\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 240,
+      "pattern": "hotel-",
+      "text": "if (input == \"hotel-001\") return Guid.Parse(\"00000000-0000-0000-0000-000000000001\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 240,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"hotel-001\") return Guid.Parse(\"00000000-0000-0000-0000-000000000001\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 241,
+      "pattern": "profile-",
+      "text": "if (input == \"profile-admin\") return Guid.Parse(\"00000000-0000-0000-0001-000000000001\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 241,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"profile-admin\") return Guid.Parse(\"00000000-0000-0000-0001-000000000001\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 241,
+      "pattern": "profile-admin",
+      "text": "if (input == \"profile-admin\") return Guid.Parse(\"00000000-0000-0000-0001-000000000001\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 242,
+      "pattern": "profile-",
+      "text": "if (input == \"profile-owner\") return Guid.Parse(\"00000000-0000-0000-0001-000000000002\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 242,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"profile-owner\") return Guid.Parse(\"00000000-0000-0000-0001-000000000002\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 242,
+      "pattern": "profile-owner",
+      "text": "if (input == \"profile-owner\") return Guid.Parse(\"00000000-0000-0000-0001-000000000002\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 243,
+      "pattern": "profile-",
+      "text": "if (input == \"profile-manager\") return Guid.Parse(\"00000000-0000-0000-0001-000000000003\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 243,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"profile-manager\") return Guid.Parse(\"00000000-0000-0000-0001-000000000003\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 244,
+      "pattern": "type-",
+      "text": "if (input == \"type-deluxe-queen-room\") return Guid.Parse(\"00000000-0000-0000-0002-000000000001\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 244,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"type-deluxe-queen-room\") return Guid.Parse(\"00000000-0000-0000-0002-000000000001\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 245,
+      "pattern": "type-",
+      "text": "if (input == \"type-executive-suite\") return Guid.Parse(\"00000000-0000-0000-0002-000000000002\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 245,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"type-executive-suite\") return Guid.Parse(\"00000000-0000-0000-0002-000000000002\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 246,
+      "pattern": "type-",
+      "text": "if (input == \"type-standard-twin-room\") return Guid.Parse(\"00000000-0000-0000-0002-000000000003\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 246,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"type-standard-twin-room\") return Guid.Parse(\"00000000-0000-0000-0002-000000000003\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 247,
+      "pattern": "room-",
+      "text": "if (input == \"room-101\") return Guid.Parse(\"00000000-0000-0000-0003-000000000101\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 247,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"room-101\") return Guid.Parse(\"00000000-0000-0000-0003-000000000101\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 248,
+      "pattern": "room-",
+      "text": "if (input == \"room-102\") return Guid.Parse(\"00000000-0000-0000-0003-000000000102\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 248,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"room-102\") return Guid.Parse(\"00000000-0000-0000-0003-000000000102\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 249,
+      "pattern": "room-",
+      "text": "if (input == \"room-103\") return Guid.Parse(\"00000000-0000-0000-0003-000000000103\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 249,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"room-103\") return Guid.Parse(\"00000000-0000-0000-0003-000000000103\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 250,
+      "pattern": "room-",
+      "text": "if (input == \"room-201\") return Guid.Parse(\"00000000-0000-0000-0003-000000000201\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 250,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"room-201\") return Guid.Parse(\"00000000-0000-0000-0003-000000000201\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 251,
+      "pattern": "room-",
+      "text": "if (input == \"room-202\") return Guid.Parse(\"00000000-0000-0000-0003-000000000202\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 251,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"room-202\") return Guid.Parse(\"00000000-0000-0000-0003-000000000202\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 252,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"cust-001\") return Guid.Parse(\"00000000-0000-0000-0004-000000000001\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 253,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"cust-002\") return Guid.Parse(\"00000000-0000-0000-0004-000000000002\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 254,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"res-20260908-1001\" || input == \"res-1001\") return Guid.Parse(\"00000000-0000-0000-0005-000000001001\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 255,
+      "pattern": "Guid.Parse",
+      "text": "if (input == \"res-20260908-1002\" || input == \"res-1002\") return Guid.Parse(\"00000000-0000-0000-0005-000000001002\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 421,
+      "pattern": "hotel-",
+      "text": "await ExecuteSqlAsync(\"DELETE FROM reservations WHERE hotel_id = 'hotel-001' OR hotel_id = '11111111-1111-1111-1111-111111111111';\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 422,
+      "pattern": "hotel-",
+      "text": "await ExecuteSqlAsync(\"DELETE FROM customers WHERE hotel_id = 'hotel-001' OR hotel_id = '11111111-1111-1111-1111-111111111111';\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 423,
+      "pattern": "hotel-",
+      "text": "await ExecuteSqlAsync(\"DELETE FROM rooms WHERE hotel_id = 'hotel-001' OR hotel_id = '11111111-1111-1111-1111-111111111111';\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 424,
+      "pattern": "hotel-",
+      "text": "await ExecuteSqlAsync(\"DELETE FROM room_types WHERE hotel_id = 'hotel-001' OR hotel_id = '11111111-1111-1111-1111-111111111111';\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 425,
+      "pattern": "hu-",
+      "text": "await ExecuteSqlAsync(\"DELETE FROM HotelUsers WHERE Id NOT LIKE 'hu-%' AND Id NOT LIKE '00000000%';\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 426,
+      "pattern": "user-",
+      "text": "await ExecuteSqlAsync(\"DELETE FROM Profiles WHERE Id NOT LIKE 'user-%' AND Id NOT LIKE 'profile-%' AND Id NOT LIKE '00000000%';\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 426,
+      "pattern": "profile-",
+      "text": "await ExecuteSqlAsync(\"DELETE FROM Profiles WHERE Id NOT LIKE 'user-%' AND Id NOT LIKE 'profile-%' AND Id NOT LIKE '00000000%';\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 427,
+      "pattern": "hotel-",
+      "text": "await ExecuteSqlAsync(\"DELETE FROM hotels WHERE id = 'hotel-001' OR id = '11111111-1111-1111-1111-111111111111' OR id NOT LIKE 'hotel-%';\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 509,
+      "pattern": "room-",
+      "text": "var customRoomId = cleanRoomNum.StartsWith(\"room-\") ? cleanRoomNum : $\"room-{cleanRoomNum.PadLeft(3, '0')}\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 521,
+      "pattern": "reservation-",
+      "text": "var sql = $@\"DELETE FROM reservations WHERE id = '{cleanId}' OR id = 'reservation-001' OR id = 'res-1001' OR id LIKE '%{cleanId}%';\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 576,
+      "pattern": "hotel-",
+      "text": "GetDeterministicGuid(\"hotel-001\"),"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 675,
+      "pattern": "hotel-",
+      "text": ": \"hotel-001\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 682,
+      "pattern": "hotel-",
+      "text": "var hotelGuid = GetDeterministicGuid(string.IsNullOrWhiteSpace(hotelIdStr) ? \"hotel-001\" : hotelIdStr);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 767,
+      "pattern": "hotel-",
+      "text": "var rawHotelId = cols.Count > 12 && cols[12].GetProperty(\"value\").ValueKind == JsonValueKind.String ? cols[12].GetProperty(\"value\").GetString() : \"hotel-001\";"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 789,
+      "pattern": "hotel-",
+      "text": "var hotelGuid = GetDeterministicGuid(string.IsNullOrWhiteSpace(rawHotelId) ? \"hotel-001\" : rawHotelId);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Infrastructure\\Services\\TursoSyncService.cs",
+      "lineNum": 799,
+      "pattern": "room-",
+      "text": "GetDeterministicGuid(\"room-001\"),"
+    },
+    {
+      "file": "backend\\HotelSaaS.Tests\\RoomMultiTenantTests.cs",
+      "lineNum": 53,
+      "pattern": "hotel-",
+      "text": "var hotelA = SeedHotel(db, \"Hotel A\", \"hotel-a\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Tests\\RoomMultiTenantTests.cs",
+      "lineNum": 87,
+      "pattern": "hotel-",
+      "text": "var hotelA = SeedHotel(db, \"Hotel A\", \"hotel-a\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Tests\\RoomMultiTenantTests.cs",
+      "lineNum": 115,
+      "pattern": "hotel-",
+      "text": "var hotelA = SeedHotel(db, \"Hotel A\", \"hotel-a\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Tests\\RoomMultiTenantTests.cs",
+      "lineNum": 116,
+      "pattern": "hotel-",
+      "text": "var hotelB = SeedHotel(db, \"Hotel B\", \"hotel-b\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Tests\\RoomMultiTenantTests.cs",
+      "lineNum": 148,
+      "pattern": "hotel-",
+      "text": "var hotelA = SeedHotel(db, \"Hotel A\", \"hotel-a\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Tests\\RoomMultiTenantTests.cs",
+      "lineNum": 173,
+      "pattern": "hotel-",
+      "text": "var hotelA = SeedHotel(db, \"Hotel A\", \"hotel-a\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Tests\\RoomMultiTenantTests.cs",
+      "lineNum": 189,
+      "pattern": "Guid.Empty",
+      "text": "Assert.DoesNotContain(types, t => t.Id == Guid.Empty);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Tests\\RoomMultiTenantTests.cs",
+      "lineNum": 198,
+      "pattern": "hotel-",
+      "text": "var hotelA = SeedHotel(db, \"Hotel A\", \"hotel-a\");"
+    },
+    {
+      "file": "backend\\HotelSaaS.Tests\\RoomMultiTenantTests.cs",
+      "lineNum": 216,
+      "pattern": "Guid.Empty",
+      "text": "Assert.DoesNotContain(rooms, r => r.Id == Guid.Empty);"
+    },
+    {
+      "file": "backend\\HotelSaaS.Tests\\TenantIsolationAndBookingTests.cs",
+      "lineNum": 35,
+      "pattern": "Guid.Empty",
+      "text": "adminContext.SetTenant(Guid.Empty, Guid.NewGuid(), \"SuperAdmin\", isSuperAdmin: true);"
+    }
+  ],
+  "frontendHardcodes": [
+    {
+      "file": "frontend\\app\\admin\\settings\\page.tsx",
+      "lineNum": 164,
+      "pattern": "localStorage",
+      "text": "const stored = localStorage.getItem('user_info');"
+    },
+    {
+      "file": "frontend\\app\\admin\\settings\\page.tsx",
+      "lineNum": 171,
+      "pattern": "localStorage",
+      "text": "localStorage.setItem('user_info', JSON.stringify(parsed));"
+    },
+    {
+      "file": "frontend\\app\\book\\[slug]\\page.tsx",
+      "lineNum": 41,
+      "pattern": "royal-stay",
+      "text": "const slug = (params?.slug as string) || 'royal-stay';"
+    },
+    {
+      "file": "frontend\\app\\login\\page.tsx",
+      "lineNum": 51,
+      "pattern": "localStorage",
+      "text": "localStorage.setItem('auth_token', res.data.token);"
+    },
+    {
+      "file": "frontend\\app\\login\\page.tsx",
+      "lineNum": 52,
+      "pattern": "localStorage",
+      "text": "localStorage.setItem('user_info', JSON.stringify(res.data));"
+    },
+    {
+      "file": "frontend\\components\\Header.tsx",
+      "lineNum": 66,
+      "pattern": "localStorage",
+      "text": "const stored = localStorage.getItem('user_info');"
+    },
+    {
+      "file": "frontend\\components\\HotelLogo.tsx",
+      "lineNum": 30,
+      "pattern": "localStorage",
+      "text": "const stored = localStorage.getItem('user_info');"
+    },
+    {
+      "file": "frontend\\components\\Sidebar.tsx",
+      "lineNum": 41,
+      "pattern": "localStorage",
+      "text": "const stored = localStorage.getItem('user_info');"
+    },
+    {
+      "file": "frontend\\lib\\api\\client.ts",
+      "lineNum": 14,
+      "pattern": "localStorage",
+      "text": "const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;"
+    },
+    {
+      "file": "frontend\\lib\\api\\services.ts",
+      "lineNum": 269,
+      "pattern": "localStorage",
+      "text": "localStorage.removeItem('auth_token');"
+    },
+    {
+      "file": "frontend\\lib\\api\\services.ts",
+      "lineNum": 270,
+      "pattern": "localStorage",
+      "text": "localStorage.removeItem('user_info');"
+    },
+    {
+      "file": "frontend\\package-lock.json",
+      "lineNum": 1091,
+      "pattern": "type-",
+      "text": "\"@typescript-eslint/type-utils\": \"8.68.0\","
+    },
+    {
+      "file": "frontend\\package-lock.json",
+      "lineNum": 1193,
+      "pattern": "type-",
+      "text": "\"node_modules/@typescript-eslint/type-utils\": {"
+    },
+    {
+      "file": "frontend\\package-lock.json",
+      "lineNum": 3524,
+      "pattern": "type-",
+      "text": "\"type-check\": \"~0.4.0\""
+    },
+    {
+      "file": "frontend\\package-lock.json",
+      "lineNum": 4241,
+      "pattern": "type-",
+      "text": "\"type-check\": \"^0.4.0\","
+    },
+    {
+      "file": "frontend\\package-lock.json",
+      "lineNum": 5563,
+      "pattern": "type-",
+      "text": "\"node_modules/type-check\": {"
+    }
+  ],
+  "localStorageUsages": [
+    {
+      "file": "frontend\\app\\admin\\settings\\page.tsx",
+      "lineNum": 164,
+      "text": "const stored = localStorage.getItem('user_info');"
+    },
+    {
+      "file": "frontend\\app\\admin\\settings\\page.tsx",
+      "lineNum": 171,
+      "text": "localStorage.setItem('user_info', JSON.stringify(parsed));"
+    },
+    {
+      "file": "frontend\\app\\login\\page.tsx",
+      "lineNum": 51,
+      "text": "localStorage.setItem('auth_token', res.data.token);"
+    },
+    {
+      "file": "frontend\\app\\login\\page.tsx",
+      "lineNum": 52,
+      "text": "localStorage.setItem('user_info', JSON.stringify(res.data));"
+    },
+    {
+      "file": "frontend\\components\\Header.tsx",
+      "lineNum": 66,
+      "text": "const stored = localStorage.getItem('user_info');"
+    },
+    {
+      "file": "frontend\\components\\HotelLogo.tsx",
+      "lineNum": 30,
+      "text": "const stored = localStorage.getItem('user_info');"
+    },
+    {
+      "file": "frontend\\components\\Sidebar.tsx",
+      "lineNum": 41,
+      "text": "const stored = localStorage.getItem('user_info');"
+    },
+    {
+      "file": "frontend\\lib\\api\\client.ts",
+      "lineNum": 14,
+      "text": "const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;"
+    },
+    {
+      "file": "frontend\\lib\\api\\services.ts",
+      "lineNum": 269,
+      "text": "localStorage.removeItem('auth_token');"
+    },
+    {
+      "file": "frontend\\lib\\api\\services.ts",
+      "lineNum": 270,
+      "text": "localStorage.removeItem('user_info');"
+    }
+  ],
+  "passwordPlainText": []
+}

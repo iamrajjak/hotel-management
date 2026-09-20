@@ -1,0 +1,1780 @@
+{
+  "HotelUsers": {
+    "columns": [
+      {
+        "cid": "0",
+        "name": "trainid",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "1"
+      },
+      {
+        "cid": "1",
+        "name": "Id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "2",
+        "name": "HotelId",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "3",
+        "name": "UserId",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "4",
+        "name": "Role",
+        "type": "INTEGER",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "5",
+        "name": "Status",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "'Active'",
+        "pk": "0"
+      },
+      {
+        "cid": "6",
+        "name": "CreatedAt",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      },
+      {
+        "cid": "7",
+        "name": "UpdatedAt",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "seq": "0",
+        "name": "sqlite_autoindex_HotelUsers_1",
+        "unique": "1",
+        "origin": "u",
+        "partial": "0"
+      }
+    ],
+    "rowCount": 10,
+    "rows": [
+      {
+        "trainid": "5",
+        "Id": "hu-256",
+        "HotelId": "hotel-001",
+        "UserId": "profile-admin",
+        "Role": "HotelOwner",
+        "Status": "1",
+        "CreatedAt": "2026-09-12 05:54:21"
+      },
+      {
+        "trainid": "6",
+        "Id": "hu-d20773",
+        "HotelId": "hotel-accf4f",
+        "UserId": "user-de7aea",
+        "Role": "HotelOwner",
+        "Status": "1",
+        "CreatedAt": "2026-09-12 06:03:38"
+      },
+      {
+        "trainid": "7",
+        "Id": "hu-6e98ed",
+        "HotelId": "hotel-dee5ff",
+        "UserId": "user-9b48f8",
+        "Role": "HotelOwner",
+        "Status": "0",
+        "CreatedAt": "2026-09-12 06:07:29"
+      },
+      {
+        "trainid": "8",
+        "Id": "hu-c65211",
+        "HotelId": "hotel-c27679",
+        "UserId": "user-2ea19e",
+        "Role": "HotelOwner",
+        "Status": "0",
+        "CreatedAt": "2026-09-12 06:08:44"
+      },
+      {
+        "trainid": "9",
+        "Id": "hu-acd86f",
+        "HotelId": "hotel-dbfd38",
+        "UserId": "user-5e532f",
+        "Role": "HotelOwner",
+        "Status": "0",
+        "CreatedAt": "2026-09-12 06:12:08"
+      },
+      {
+        "trainid": "10",
+        "Id": "hu-788692",
+        "HotelId": "hotel-04db9d",
+        "UserId": "user-530396",
+        "Role": "HotelOwner",
+        "Status": "0",
+        "CreatedAt": "2026-09-12 06:25:55"
+      },
+      {
+        "trainid": "12",
+        "Id": "hu-863a95",
+        "HotelId": "hotel-69cb96",
+        "UserId": "user-954992",
+        "Role": "HotelOwner",
+        "Status": "1",
+        "CreatedAt": "2026-09-12 06:26:38"
+      },
+      {
+        "trainid": "15",
+        "Id": "hu-deabdd",
+        "HotelId": "hotel-dcb407",
+        "UserId": "user-75f329",
+        "Role": "HotelOwner",
+        "Status": "1",
+        "CreatedAt": "2026-09-12 06:29:58"
+      },
+      {
+        "trainid": "17",
+        "Id": "hu-a447f8",
+        "HotelId": "hotel-fca9eb",
+        "UserId": "user-04226d",
+        "Role": "HotelOwner",
+        "Status": "1",
+        "CreatedAt": "2026-09-12 09:01:06"
+      },
+      {
+        "trainid": "19",
+        "Id": "hu-1ef367",
+        "HotelId": "hotel-ec230b",
+        "UserId": "user-5db738",
+        "Role": "HotelOwner",
+        "Status": "1",
+        "CreatedAt": "2026-09-12 09:01:08"
+      }
+    ]
+  },
+  "Profiles": {
+    "columns": [
+      {
+        "cid": "0",
+        "name": "trainid",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "1"
+      },
+      {
+        "cid": "1",
+        "name": "Id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "2",
+        "name": "FullName",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "3",
+        "name": "Email",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "4",
+        "name": "Phone",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "5",
+        "name": "AvatarUrl",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "6",
+        "name": "PasswordHash",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "7",
+        "name": "IsSuperAdmin",
+        "type": "INTEGER",
+        "notnull": "1",
+        "dflt_value": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "8",
+        "name": "CreatedAt",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      },
+      {
+        "cid": "9",
+        "name": "UpdatedAt",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "seq": "0",
+        "name": "sqlite_autoindex_Profiles_2",
+        "unique": "1",
+        "origin": "u",
+        "partial": "0"
+      },
+      {
+        "seq": "1",
+        "name": "sqlite_autoindex_Profiles_1",
+        "unique": "1",
+        "origin": "u",
+        "partial": "0"
+      }
+    ],
+    "rowCount": 11,
+    "rows": [
+      {
+        "trainid": "5",
+        "Id": "profile-admin",
+        "FullName": "Rajjak Khan",
+        "Email": "rajjak@gmail.com",
+        "Phone": "+91 9876543210",
+        "PasswordHash": "Password@123",
+        "IsSuperAdmin": "0",
+        "CreatedAt": "2026-09-12 05:54:20"
+      },
+      {
+        "trainid": "6",
+        "Id": "user-de7aea",
+        "FullName": "Rajjak Khan",
+        "Email": "rajjak_test_1789193018141@gmail.com",
+        "Phone": "+91 9876543210",
+        "PasswordHash": "Password@123",
+        "IsSuperAdmin": "0",
+        "CreatedAt": "2026-09-12 06:03:38"
+      },
+      {
+        "trainid": "7",
+        "Id": "user-9b48f8",
+        "FullName": "Rajjak Khan",
+        "Email": "rajjak_test_1789193248857@gmail.com",
+        "Phone": "+91 9876543210",
+        "PasswordHash": "Password@123",
+        "IsSuperAdmin": "0",
+        "CreatedAt": "2026-09-12 06:07:29"
+      },
+      {
+        "trainid": "8",
+        "Id": "user-2ea19e",
+        "FullName": "Rajjak Khan",
+        "Email": "rajjak_test_1789193321059@gmail.com",
+        "Phone": "+91 9876543210",
+        "PasswordHash": "Password@123",
+        "IsSuperAdmin": "0",
+        "CreatedAt": "2026-09-12 06:08:42"
+      },
+      {
+        "trainid": "9",
+        "Id": "user-5e532f",
+        "FullName": "Rajjak Khan",
+        "Email": "rajjak_test_1789193527574@gmail.com",
+        "Phone": "+91 9876543210",
+        "PasswordHash": "Password@123",
+        "IsSuperAdmin": "0",
+        "CreatedAt": "2026-09-12 06:12:07"
+      },
+      {
+        "trainid": "10",
+        "Id": "profile-admin-2",
+        "FullName": "Super Admin",
+        "Email": "admin@hotel.com",
+        "Phone": "+91 9900000000",
+        "PasswordHash": "Admin@123",
+        "IsSuperAdmin": "1",
+        "CreatedAt": "2026-09-12 06:21:07"
+      },
+      {
+        "trainid": "11",
+        "Id": "user-530396",
+        "FullName": "Rajjak Khan",
+        "Email": "rajjak_test_1789194356508@gmail.com",
+        "Phone": "+91 9876543210",
+        "PasswordHash": "Password@123",
+        "IsSuperAdmin": "0",
+        "CreatedAt": "2026-09-12 06:25:55"
+      },
+      {
+        "trainid": "12",
+        "Id": "profile-owner",
+        "FullName": "Rajjak Khan",
+        "Email": "rajjak_owner_1789194399533@gmail.com",
+        "Phone": "+91 9876543210",
+        "PasswordHash": "Password@123",
+        "IsSuperAdmin": "0",
+        "CreatedAt": "2026-09-12 06:26:38"
+      },
+      {
+        "trainid": "13",
+        "Id": "user-75f329",
+        "FullName": "mustak",
+        "Email": "mustak@gmail.com",
+        "Phone": "9784306040",
+        "PasswordHash": "mustak@123",
+        "IsSuperAdmin": "0",
+        "CreatedAt": "2026-09-12 06:29:58"
+      },
+      {
+        "trainid": "14",
+        "Id": "user-04226d",
+        "FullName": "Rajesh Royal",
+        "Email": "royal@palace.com",
+        "Phone": "+91 9876543210",
+        "PasswordHash": "Owner@123",
+        "IsSuperAdmin": "0",
+        "CreatedAt": "2026-09-12 09:01:06"
+      },
+      {
+        "trainid": "15",
+        "Id": "user-5db738",
+        "FullName": "Surya Pratap",
+        "Email": "surya@jodhpur.com",
+        "Phone": "+91 9876543211",
+        "PasswordHash": "Owner@123",
+        "IsSuperAdmin": "0",
+        "CreatedAt": "2026-09-12 09:01:08"
+      }
+    ]
+  },
+  "customers": {
+    "columns": [
+      {
+        "cid": "0",
+        "name": "trainid",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "1"
+      },
+      {
+        "cid": "1",
+        "name": "id",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "2",
+        "name": "hotel_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "3",
+        "name": "full_name",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "4",
+        "name": "email",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "5",
+        "name": "phone",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "6",
+        "name": "address",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "7",
+        "name": "city",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "8",
+        "name": "id_type",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "9",
+        "name": "id_number",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "10",
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      },
+      {
+        "cid": "11",
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "seq": "0",
+        "name": "sqlite_autoindex_customers_1",
+        "unique": "1",
+        "origin": "u",
+        "partial": "0"
+      }
+    ],
+    "rowCount": 0,
+    "rows": []
+  },
+  "hotel_subscriptions": {
+    "columns": [
+      {
+        "cid": "0",
+        "name": "trainid",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "1"
+      },
+      {
+        "cid": "1",
+        "name": "id",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "2",
+        "name": "hotel_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "3",
+        "name": "plan_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "4",
+        "name": "start_date",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "5",
+        "name": "end_date",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "6",
+        "name": "status",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "'Active'",
+        "pk": "0"
+      },
+      {
+        "cid": "7",
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "seq": "0",
+        "name": "sqlite_autoindex_hotel_subscriptions_1",
+        "unique": "1",
+        "origin": "u",
+        "partial": "0"
+      }
+    ],
+    "rowCount": 0,
+    "rows": []
+  },
+  "hotels": {
+    "columns": [
+      {
+        "cid": "0",
+        "name": "trainid",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "1"
+      },
+      {
+        "cid": "1",
+        "name": "id",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "2",
+        "name": "name",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "3",
+        "name": "email",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "4",
+        "name": "phone",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "5",
+        "name": "address",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "6",
+        "name": "city",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "7",
+        "name": "state",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "8",
+        "name": "country",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "9",
+        "name": "gst_number",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "10",
+        "name": "tax_rate",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "11",
+        "name": "bank_name",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "12",
+        "name": "account_no",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "13",
+        "name": "ifsc_code",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "14",
+        "name": "upi_id",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "15",
+        "name": "status",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "'Active'",
+        "pk": "0"
+      },
+      {
+        "cid": "16",
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      },
+      {
+        "cid": "17",
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "seq": "0",
+        "name": "sqlite_autoindex_hotels_1",
+        "unique": "1",
+        "origin": "u",
+        "partial": "0"
+      }
+    ],
+    "rowCount": 10,
+    "rows": [
+      {
+        "trainid": "17",
+        "id": "hotel-001",
+        "name": "Jodhpur Royal Palace",
+        "email": "rajjak@gmail.com",
+        "phone": "+91 9876543210",
+        "address": "",
+        "city": "Jodhpur",
+        "state": "Rajasthan",
+        "country": "India",
+        "gst_number": "",
+        "tax_rate": "12%",
+        "bank_name": "",
+        "account_no": "",
+        "ifsc_code": "",
+        "upi_id": "",
+        "status": "Active",
+        "created_at": "2026-09-12 05:54:18",
+        "updated_at": "2026-09-12 05:54:18"
+      },
+      {
+        "trainid": "21",
+        "id": "hotel-accf4f",
+        "name": "Royal Court 1789193018148",
+        "email": "rajjak_test_1789193018141@gmail.com",
+        "phone": "+91 9876543210",
+        "address": "",
+        "city": "Jodhpur",
+        "state": "Rajasthan",
+        "country": "India",
+        "gst_number": "",
+        "tax_rate": "12%",
+        "bank_name": "",
+        "account_no": "",
+        "ifsc_code": "",
+        "upi_id": "",
+        "status": "Active",
+        "created_at": "2026-09-12 06:03:38",
+        "updated_at": "2026-09-12 06:03:38"
+      },
+      {
+        "trainid": "25",
+        "id": "hotel-dee5ff",
+        "name": "Royal Court 1789193248862",
+        "email": "rajjak_test_1789193248857@gmail.com",
+        "phone": "+91 9876543210",
+        "address": "",
+        "city": "Jodhpur",
+        "state": "Rajasthan",
+        "country": "India",
+        "gst_number": "",
+        "tax_rate": "12%",
+        "bank_name": "",
+        "account_no": "",
+        "ifsc_code": "",
+        "upi_id": "",
+        "status": "PendingApproval",
+        "created_at": "2026-09-12 06:07:29",
+        "updated_at": "2026-09-12 06:07:29"
+      },
+      {
+        "trainid": "29",
+        "id": "hotel-c27679",
+        "name": "Royal Court 1789193321065",
+        "email": "rajjak_test_1789193321059@gmail.com",
+        "phone": "+91 9876543210",
+        "address": "",
+        "city": "Jodhpur",
+        "state": "Rajasthan",
+        "country": "India",
+        "gst_number": "",
+        "tax_rate": "12%",
+        "bank_name": "",
+        "account_no": "",
+        "ifsc_code": "",
+        "upi_id": "",
+        "status": "PendingApproval",
+        "created_at": "2026-09-12 06:08:41",
+        "updated_at": "2026-09-12 06:08:41"
+      },
+      {
+        "trainid": "33",
+        "id": "hotel-dbfd38",
+        "name": "Royal Court 1789193527579",
+        "email": "rajjak_test_1789193527574@gmail.com",
+        "phone": "+91 9876543210",
+        "address": "",
+        "city": "Jodhpur",
+        "state": "Rajasthan",
+        "country": "India",
+        "gst_number": "",
+        "tax_rate": "12%",
+        "bank_name": "",
+        "account_no": "",
+        "ifsc_code": "",
+        "upi_id": "",
+        "status": "PendingApproval",
+        "created_at": "2026-09-12 06:12:07",
+        "updated_at": "2026-09-12 06:12:07"
+      },
+      {
+        "trainid": "37",
+        "id": "hotel-04db9d",
+        "name": "Royal Court 1789194356514",
+        "email": "rajjak_test_1789194356508@gmail.com",
+        "phone": "+91 9876543210",
+        "address": "",
+        "city": "Jodhpur",
+        "state": "Rajasthan",
+        "country": "India",
+        "gst_number": "",
+        "tax_rate": "12%",
+        "bank_name": "",
+        "account_no": "",
+        "ifsc_code": "",
+        "upi_id": "",
+        "status": "PendingApproval",
+        "created_at": "2026-09-12 06:25:55",
+        "updated_at": "2026-09-12 06:25:55"
+      },
+      {
+        "trainid": "42",
+        "id": "hotel-69cb96",
+        "name": "Jodhpur Palace 1789194399533",
+        "email": "rajjak_owner_1789194399533@gmail.com",
+        "phone": "+91 9876543210",
+        "address": "",
+        "city": "Jodhpur",
+        "state": "Rajasthan",
+        "country": "India",
+        "gst_number": "",
+        "tax_rate": "12%",
+        "bank_name": "",
+        "account_no": "",
+        "ifsc_code": "",
+        "upi_id": "",
+        "status": "Active",
+        "created_at": "2026-09-12 06:26:38",
+        "updated_at": "2026-09-12 06:26:38"
+      },
+      {
+        "trainid": "48",
+        "id": "hotel-dcb407",
+        "name": "mustak",
+        "email": "rajjakkhan5453@gmail.com",
+        "phone": "9",
+        "address": "123 Beach Road",
+        "city": "Goa",
+        "state": "Goa",
+        "country": "India",
+        "gst_number": "",
+        "tax_rate": "12%",
+        "bank_name": "",
+        "account_no": "",
+        "ifsc_code": "",
+        "upi_id": "",
+        "status": "Active",
+        "created_at": "2026-09-12 06:29:58",
+        "updated_at": "2026-09-12 06:29:58"
+      },
+      {
+        "trainid": "62",
+        "id": "hotel-fca9eb",
+        "name": "Royal Palace Hotel Jodhpur",
+        "email": "royal@palace.com",
+        "phone": "+91 9876543210",
+        "address": "",
+        "city": "",
+        "state": "",
+        "country": "India",
+        "gst_number": "",
+        "tax_rate": "12%",
+        "bank_name": "",
+        "account_no": "",
+        "ifsc_code": "",
+        "upi_id": "",
+        "status": "Active",
+        "created_at": "2026-09-12 09:01:06",
+        "updated_at": "2026-09-12 09:01:06"
+      },
+      {
+        "trainid": "67",
+        "id": "hotel-ec230b",
+        "name": "Hotel Surya Jodhpur",
+        "email": "surya@jodhpur.com",
+        "phone": "+91 9876543211",
+        "address": "",
+        "city": "",
+        "state": "",
+        "country": "India",
+        "gst_number": "",
+        "tax_rate": "12%",
+        "bank_name": "",
+        "account_no": "",
+        "ifsc_code": "",
+        "upi_id": "",
+        "status": "Active",
+        "created_at": "2026-09-12 09:01:08",
+        "updated_at": "2026-09-12 09:01:08"
+      }
+    ]
+  },
+  "payments": {
+    "columns": [
+      {
+        "cid": "0",
+        "name": "trainid",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "1"
+      },
+      {
+        "cid": "1",
+        "name": "id",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "2",
+        "name": "hotel_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "3",
+        "name": "reservation_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "4",
+        "name": "amount",
+        "type": "REAL",
+        "notnull": "1",
+        "dflt_value": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "5",
+        "name": "payment_method",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "6",
+        "name": "payment_status",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "'Pending'",
+        "pk": "0"
+      },
+      {
+        "cid": "7",
+        "name": "transaction_reference",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "8",
+        "name": "paid_at",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "9",
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "seq": "0",
+        "name": "sqlite_autoindex_payments_1",
+        "unique": "1",
+        "origin": "u",
+        "partial": "0"
+      }
+    ],
+    "rowCount": 0,
+    "rows": []
+  },
+  "reservations": {
+    "columns": [
+      {
+        "cid": "0",
+        "name": "id",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "1"
+      },
+      {
+        "cid": "1",
+        "name": "hotel_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "2",
+        "name": "customer_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "3",
+        "name": "room_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "4",
+        "name": "check_in_date",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "5",
+        "name": "check_out_date",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "6",
+        "name": "adults",
+        "type": "INTEGER",
+        "notnull": "1",
+        "dflt_value": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "7",
+        "name": "children",
+        "type": "INTEGER",
+        "notnull": "1",
+        "dflt_value": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "8",
+        "name": "booking_status",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "'Confirmed'",
+        "pk": "0"
+      },
+      {
+        "cid": "9",
+        "name": "total_amount",
+        "type": "REAL",
+        "notnull": "1",
+        "dflt_value": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "10",
+        "name": "special_requests",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "11",
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      },
+      {
+        "cid": "12",
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      }
+    ],
+    "foreignKeys": [
+      {
+        "id": "0",
+        "seq": "0",
+        "table": "rooms",
+        "from": "room_id",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "RESTRICT",
+        "match": "NONE"
+      },
+      {
+        "id": "1",
+        "seq": "0",
+        "table": "customers",
+        "from": "customer_id",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "RESTRICT",
+        "match": "NONE"
+      },
+      {
+        "id": "2",
+        "seq": "0",
+        "table": "hotels",
+        "from": "hotel_id",
+        "to": "id",
+        "on_update": "NO ACTION",
+        "on_delete": "CASCADE",
+        "match": "NONE"
+      }
+    ],
+    "indexes": [
+      {
+        "seq": "0",
+        "name": "idx_reservations_dates",
+        "unique": "0",
+        "origin": "c",
+        "partial": "0"
+      },
+      {
+        "seq": "1",
+        "name": "idx_reservations_room_id",
+        "unique": "0",
+        "origin": "c",
+        "partial": "0"
+      },
+      {
+        "seq": "2",
+        "name": "idx_reservations_customer_id",
+        "unique": "0",
+        "origin": "c",
+        "partial": "0"
+      },
+      {
+        "seq": "3",
+        "name": "idx_reservations_hotel_id",
+        "unique": "0",
+        "origin": "c",
+        "partial": "0"
+      },
+      {
+        "seq": "4",
+        "name": "sqlite_autoindex_reservations_1",
+        "unique": "1",
+        "origin": "pk",
+        "partial": "0"
+      }
+    ],
+    "rowCount": 0,
+    "rows": []
+  },
+  "reviews": {
+    "columns": [
+      {
+        "cid": "0",
+        "name": "trainid",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "1"
+      },
+      {
+        "cid": "1",
+        "name": "id",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "2",
+        "name": "hotel_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "3",
+        "name": "customer_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "4",
+        "name": "reservation_id",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "5",
+        "name": "rating",
+        "type": "INTEGER",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "6",
+        "name": "comment",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "7",
+        "name": "status",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "'Published'",
+        "pk": "0"
+      },
+      {
+        "cid": "8",
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "seq": "0",
+        "name": "sqlite_autoindex_reviews_1",
+        "unique": "1",
+        "origin": "u",
+        "partial": "0"
+      }
+    ],
+    "rowCount": 0,
+    "rows": []
+  },
+  "room_types": {
+    "columns": [
+      {
+        "cid": "0",
+        "name": "trainid",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "1"
+      },
+      {
+        "cid": "1",
+        "name": "id",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "2",
+        "name": "hotel_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "3",
+        "name": "name",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "4",
+        "name": "slug",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "5",
+        "name": "description",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "6",
+        "name": "base_price",
+        "type": "REAL",
+        "notnull": "1",
+        "dflt_value": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "7",
+        "name": "max_adults",
+        "type": "INTEGER",
+        "notnull": "1",
+        "dflt_value": "2",
+        "pk": "0"
+      },
+      {
+        "cid": "8",
+        "name": "max_children",
+        "type": "INTEGER",
+        "notnull": "1",
+        "dflt_value": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "9",
+        "name": "status",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "'Active'",
+        "pk": "0"
+      },
+      {
+        "cid": "10",
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      },
+      {
+        "cid": "11",
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "seq": "0",
+        "name": "sqlite_autoindex_room_types_1",
+        "unique": "1",
+        "origin": "u",
+        "partial": "0"
+      }
+    ],
+    "rowCount": 6,
+    "rows": [
+      {
+        "trainid": "13",
+        "id": "type-deluxe-room",
+        "hotel_id": "hotel-001",
+        "name": "Deluxe Room",
+        "slug": "deluxe-room",
+        "base_price": 8500,
+        "max_adults": "2",
+        "max_children": "0",
+        "status": "Active",
+        "created_at": "2026-09-12 05:54:23",
+        "updated_at": "2026-09-12 05:54:23"
+      },
+      {
+        "trainid": "14",
+        "id": "type-executive-suite",
+        "hotel_id": "hotel-001",
+        "name": "Executive Suite",
+        "slug": "executive-suite",
+        "base_price": 15000,
+        "max_adults": "2",
+        "max_children": "0",
+        "status": "Active",
+        "created_at": "2026-09-12 05:54:27",
+        "updated_at": "2026-09-12 05:54:27"
+      },
+      {
+        "trainid": "15",
+        "id": "type-standard-room",
+        "hotel_id": "hotel-001",
+        "name": "Standard Room",
+        "slug": "standard-room",
+        "base_price": 5000,
+        "max_adults": "2",
+        "max_children": "0",
+        "status": "Active",
+        "created_at": "2026-09-12 05:54:31",
+        "updated_at": "2026-09-12 05:54:31"
+      },
+      {
+        "trainid": "37",
+        "id": "type-deluxe-queen-room",
+        "hotel_id": "hotel-dcb407",
+        "name": "Deluxe Queen Room",
+        "slug": "deluxe-queen-room",
+        "base_price": 5200,
+        "max_adults": "2",
+        "max_children": "0",
+        "status": "Active",
+        "created_at": "2026-09-12 06:40:07",
+        "updated_at": "2026-09-12 06:40:07"
+      },
+      {
+        "trainid": "52",
+        "id": "type-royal-suite",
+        "hotel_id": "hotel-fca9eb",
+        "name": "Royal Suite",
+        "slug": "royal-suite",
+        "base_price": 8500,
+        "max_adults": "2",
+        "max_children": "0",
+        "status": "Active",
+        "created_at": "2026-09-12 09:01:12",
+        "updated_at": "2026-09-12 09:01:12"
+      },
+      {
+        "trainid": "53",
+        "id": "type-surya-deluxe",
+        "hotel_id": "hotel-ec230b",
+        "name": "Surya Deluxe",
+        "slug": "surya-deluxe",
+        "base_price": 4200,
+        "max_adults": "2",
+        "max_children": "0",
+        "status": "Active",
+        "created_at": "2026-09-12 09:01:13",
+        "updated_at": "2026-09-12 09:01:13"
+      }
+    ]
+  },
+  "rooms": {
+    "columns": [
+      {
+        "cid": "0",
+        "name": "trainid",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "1"
+      },
+      {
+        "cid": "1",
+        "name": "id",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "2",
+        "name": "hotel_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "3",
+        "name": "room_type_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "4",
+        "name": "room_number",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "5",
+        "name": "floor",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "6",
+        "name": "price",
+        "type": "REAL",
+        "notnull": "1",
+        "dflt_value": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "7",
+        "name": "status",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "'Available'",
+        "pk": "0"
+      },
+      {
+        "cid": "8",
+        "name": "notes",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "9",
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      },
+      {
+        "cid": "10",
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "seq": "0",
+        "name": "sqlite_autoindex_rooms_1",
+        "unique": "1",
+        "origin": "u",
+        "partial": "0"
+      }
+    ],
+    "rowCount": 6,
+    "rows": [
+      {
+        "trainid": "13",
+        "id": "room-101-temp",
+        "hotel_id": "hotel-ec230b",
+        "room_type_id": "type-standard-room",
+        "room_number": "101-temp",
+        "floor": "1st Floor",
+        "price": 5000,
+        "status": "Available",
+        "created_at": "2026-09-12 05:54:24",
+        "updated_at": "2026-09-12 05:54:24"
+      },
+      {
+        "trainid": "38",
+        "id": "room-Room 101",
+        "hotel_id": "hotel-001",
+        "room_type_id": "type-deluxe-queen-room",
+        "room_number": "Room 101",
+        "floor": "1st Floor",
+        "price": 2500,
+        "status": "Available",
+        "created_at": "2026-09-12 06:49:38",
+        "updated_at": "2026-09-12 06:49:38"
+      },
+      {
+        "trainid": "39",
+        "id": "room-Room 101 Premier",
+        "hotel_id": "hotel-001",
+        "room_type_id": "type-deluxe-queen-room",
+        "room_number": "Room 101 Premier",
+        "floor": "2nd Floor",
+        "price": 3500,
+        "status": "Maintenance",
+        "created_at": "2026-09-12 06:49:39",
+        "updated_at": "2026-09-12 06:49:39"
+      },
+      {
+        "trainid": "40",
+        "id": "room-002",
+        "hotel_id": "hotel-001",
+        "room_type_id": "type-deluxe-queen-room",
+        "room_number": "Room 101 Premier",
+        "floor": "2nd Floor",
+        "price": 3500,
+        "status": "Maintenance",
+        "created_at": "2026-09-12 06:52:00",
+        "updated_at": "2026-09-12 06:52:00"
+      },
+      {
+        "trainid": "42",
+        "id": "room-1024",
+        "hotel_id": "hotel-dcb407",
+        "room_type_id": "type-deluxe-queen-room",
+        "room_number": "400",
+        "floor": "1st Floor",
+        "price": 100,
+        "status": "Available",
+        "created_at": "2026-09-12 06:53:26",
+        "updated_at": "2026-09-12 06:53:26"
+      },
+      {
+        "trainid": "43",
+        "id": "room-1025",
+        "hotel_id": "hotel-dcb407",
+        "room_type_id": "type-deluxe-queen-room",
+        "room_number": "401",
+        "floor": "5nd Floor",
+        "price": 6000,
+        "status": "Cleaning",
+        "created_at": "2026-09-12 06:54:14",
+        "updated_at": "2026-09-12 06:54:14"
+      }
+    ]
+  },
+  "subscription_plans": {
+    "columns": [
+      {
+        "cid": "0",
+        "name": "trainid",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "1"
+      },
+      {
+        "cid": "1",
+        "name": "id",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "2",
+        "name": "name",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "3",
+        "name": "price",
+        "type": "REAL",
+        "notnull": "1",
+        "dflt_value": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "4",
+        "name": "duration_days",
+        "type": "INTEGER",
+        "notnull": "1",
+        "dflt_value": "30",
+        "pk": "0"
+      },
+      {
+        "cid": "5",
+        "name": "max_rooms",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "6",
+        "name": "max_users",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "7",
+        "name": "features",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "8",
+        "name": "status",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "'Active'",
+        "pk": "0"
+      },
+      {
+        "cid": "9",
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      },
+      {
+        "cid": "10",
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "seq": "0",
+        "name": "sqlite_autoindex_subscription_plans_1",
+        "unique": "1",
+        "origin": "u",
+        "partial": "0"
+      }
+    ],
+    "rowCount": 0,
+    "rows": []
+  },
+  "users": {
+    "columns": [
+      {
+        "cid": "0",
+        "name": "trainid",
+        "type": "INTEGER",
+        "notnull": "0",
+        "pk": "1"
+      },
+      {
+        "cid": "1",
+        "name": "id",
+        "type": "TEXT",
+        "notnull": "0",
+        "pk": "0"
+      },
+      {
+        "cid": "2",
+        "name": "hotel_id",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "3",
+        "name": "full_name",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "4",
+        "name": "email",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "5",
+        "name": "password_hash",
+        "type": "TEXT",
+        "notnull": "1",
+        "pk": "0"
+      },
+      {
+        "cid": "6",
+        "name": "role",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "'Staff'",
+        "pk": "0"
+      },
+      {
+        "cid": "7",
+        "name": "status",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "'Active'",
+        "pk": "0"
+      },
+      {
+        "cid": "8",
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      },
+      {
+        "cid": "9",
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": "1",
+        "dflt_value": "CURRENT_TIMESTAMP",
+        "pk": "0"
+      }
+    ],
+    "foreignKeys": [],
+    "indexes": [
+      {
+        "seq": "0",
+        "name": "sqlite_autoindex_users_1",
+        "unique": "1",
+        "origin": "u",
+        "partial": "0"
+      }
+    ],
+    "rowCount": 0,
+    "rows": []
+  }
+}

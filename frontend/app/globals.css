@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Dark Mode Palette & Overrides */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+html.dark main,
+html.dark header,
+html.dark sidebar,
+html.dark div.bg-white,
+html.dark div.bg-slate-50 {
+  background-color: #111827 !important;
+  color: #f9fafb !important;
+  border-color: #1f2937 !important;
+}
+
+html.dark table thead {
+  background-color: #1f2937 !important;
+  color: #9ca3af !important;
+}
+
+html.dark table tbody tr {
+  border-color: #1f2937 !important;
+}
+
+html.dark table tbody tr:hover {
+  background-color: #1e293b !important;
+}
+
+html.dark .text-slate-900,
+html.dark .text-slate-800,
+html.dark .text-slate-700 {
+  color: #f9fafb !important;
+}
+
+html.dark .text-slate-600,
+html.dark .text-slate-500 {
+  color: #9ca3af !important;
+}
+
+html.dark .bg-slate-100,
+html.dark .bg-slate-50\/80 {
+  background-color: #1f2937 !important;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+  border-color: #374151 !important;
+}
