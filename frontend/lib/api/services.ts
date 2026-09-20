@@ -24,6 +24,7 @@ export interface Hotel {
   id: string;
   name: string;
   slug: string;
+  hotelCode?: string;
   logoUrl?: string;
   coverImageUrl?: string;
   description?: string;
@@ -192,6 +193,7 @@ export interface PosOrder {
   id: string;
   orderNumber: string;
   reservationId?: string;
+  roomId?: string;
   roomNumber?: string;
   guestName?: string;
   tableNumber?: string;
