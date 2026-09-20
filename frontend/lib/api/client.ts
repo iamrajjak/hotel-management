@@ -1,4 +1,17 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+function getApiBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl && envUrl.trim().length > 0) {
+    const clean = envUrl.trim();
+    return clean.endsWith('/api') ? clean : `${clean.replace(/\/$/, '')}/api`;
+  }
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host !== 'localhost' && host !== '127.0.0.1' && !host.endsWith('.vercel.app')) {
+      return `http://${host}:5000/api`;
+    }
+  }
+  return 'http://localhost:5000/api';
+}
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -23,7 +36,8 @@ export async function apiClient<T>(
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const baseUrl = getApiBaseUrl();
+    const response = await fetch(`${baseUrl}${endpoint}`, {
       ...options,
       headers,
     });
