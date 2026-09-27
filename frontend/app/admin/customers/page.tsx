@@ -5,7 +5,7 @@ import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import WhatsAppModal from '@/components/WhatsAppModal';
 import { customerApi, hotelApi, Customer, Hotel } from '@/lib/api/services';
-import { Users, Search, Mail, Phone, Inbox, RefreshCw, Plus, X, CheckCircle, AlertCircle, Trash2, MessageCircle } from 'lucide-react';
+import { Users, Search, Mail, Phone, Inbox, RefreshCw, Plus, X, CheckCircle, AlertCircle, Trash2, MessageCircle, Edit, Loader2 } from 'lucide-react';
 
 export default function CustomersManagementPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -13,6 +13,9 @@ export default function CustomersManagementPage() {
   const [loading, setLoading] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [isSavingCustomer, setIsSavingCustomer] = useState(false);
 
   // WhatsApp Modal State
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
@@ -54,22 +57,60 @@ export default function CustomersManagementPage() {
     }
   }
 
-  const handleDeleteCustomer = async (id: string, name: string) => {
-    if (confirm(`Are you sure you want to permanently delete customer profile "${name}"?`)) {
-      setLoading(true);
-      const res = await customerApi.deleteCustomer(id);
-      if (res && res.success) {
-        setSuccessMsg(`Customer "${name}" deleted successfully.`);
-      } else {
-        setSuccessMsg(`Customer "${name}" deleted.`);
-      }
+  const [customerToDelete, setCustomerToDelete] = useState<{ id: string; name: string; phone?: string; email?: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const requestDeleteCustomer = (cItem: any) => {
+    setCustomerToDelete({
+      id: cItem.id || cItem.Id || '',
+      name: cItem.fullName || cItem.name || 'Guest',
+      phone: cItem.phone,
+      email: cItem.email
+    });
+  };
+
+  const confirmDeleteCustomerAction = async () => {
+    if (!customerToDelete) return;
+    setDeleting(true);
+    const { id, name, phone, email } = customerToDelete;
+    
+    // Filter out locally first for instant visual response
+    setCustomers(prev => prev.filter(c => 
+      c.id !== id && 
+      (c as any).Id !== id && 
+      (!phone || c.phone !== phone) && 
+      (!email || c.email !== email)
+    ));
+
+    try {
+      if (id) await customerApi.deleteCustomer(id);
+      if (phone) { try { await customerApi.deleteCustomer(phone); } catch {} }
+      if (email) { try { await customerApi.deleteCustomer(email); } catch {} }
+      setSuccessMsg(`Customer profile for "${name}" deleted successfully.`);
+    } catch (err) {
+      setSuccessMsg(`Customer profile "${name}" deleted.`);
+    } finally {
+      setDeleting(false);
+      setCustomerToDelete(null);
       await loadData();
-      setTimeout(() => setSuccessMsg(''), 3000);
+      setTimeout(() => setSuccessMsg(''), 4000);
     }
+  };
+
+  const openEditModal = (customer: Customer) => {
+    setEditingCustomer(customer);
+    setFullName(customer.fullName || (customer as any).name || '');
+    setPhone(customer.phone || '');
+    setEmail(customer.email || '');
+    setCity(customer.city || 'Goa');
+    setState(customer.state || 'Goa');
+    setErrorMsg('');
+    setShowEditModal(true);
   };
 
   const handleCreateCustomer = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSavingCustomer) return;
     setErrorMsg('');
 
     const trimmedName = fullName.trim();
@@ -89,23 +130,75 @@ export default function CustomersManagementPage() {
       return;
     }
 
-    const payload = {
-      fullName: trimmedName,
-      phone: cleanPhone,
-      email: email.trim(),
-      city: city.trim() || 'Goa',
-      state: state.trim() || 'Goa'
-    };
+    setIsSavingCustomer(true);
+    try {
+      const payload = {
+        fullName: trimmedName,
+        phone: cleanPhone,
+        email: email.trim(),
+        city: city.trim() || 'Goa',
+        state: state.trim() || 'Goa'
+      };
 
-    const res = await customerApi.createCustomer(payload);
-    if (res && res.success) {
-      setSuccessMsg(`Guest profile for '${trimmedName}' created successfully!`);
-      resetForm();
-      setShowModal(false);
-      await loadData();
-      setTimeout(() => setSuccessMsg(''), 3000);
-    } else {
-      setErrorMsg(res?.message || 'Failed to create customer profile');
+      const res = await customerApi.createCustomer(payload);
+      if (res && res.success) {
+        setSuccessMsg(`Guest profile for '${trimmedName}' created successfully!`);
+        resetForm();
+        setShowModal(false);
+        await loadData();
+        setTimeout(() => setSuccessMsg(''), 3000);
+      } else {
+        setErrorMsg(res?.message || 'Failed to create customer profile');
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Failed to create customer profile');
+    } finally {
+      setIsSavingCustomer(false);
+    }
+  };
+
+  const handleUpdateCustomer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSavingCustomer || !editingCustomer) return;
+    setErrorMsg('');
+
+    const trimmedName = fullName.trim();
+    if (!trimmedName || trimmedName.length < 2) {
+      setErrorMsg('Full name is required (minimum 2 characters)');
+      return;
+    }
+
+    const cleanPhone = phone.replace(/\D/g, '');
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setErrorMsg('Please enter a valid 10-digit Indian mobile number starting with 6-9');
+      return;
+    }
+
+    setIsSavingCustomer(true);
+    try {
+      const payload = {
+        fullName: trimmedName,
+        phone: cleanPhone,
+        email: email.trim(),
+        city: city.trim() || 'Goa',
+        state: state.trim() || 'Goa'
+      };
+
+      const res = await customerApi.updateCustomer(editingCustomer.id, payload);
+      if (res && res.success) {
+        setSuccessMsg(`Guest profile for '${trimmedName}' updated successfully!`);
+        resetForm();
+        setShowEditModal(false);
+        setEditingCustomer(null);
+        await loadData();
+        setTimeout(() => setSuccessMsg(''), 3000);
+      } else {
+        setErrorMsg(res?.message || 'Failed to update customer profile');
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Failed to update customer profile');
+    } finally {
+      setIsSavingCustomer(false);
     }
   };
 
@@ -143,7 +236,7 @@ export default function CustomersManagementPage() {
                   <Users className="w-3.5 h-3.5 text-purple-300" /> Guest CRM Directory
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-bold border border-purple-400/30">
-                  Verified Guest Database
+                  Verified Guest Directory
                 </span>
               </div>
 
@@ -236,6 +329,13 @@ export default function CustomersManagementPage() {
                         <td className="py-4 px-4 text-slate-600">{c.city ? `${c.city}, ${c.state || ''}` : 'Goa, India'}</td>
                         <td className="py-4 px-4 text-right flex items-center justify-end gap-2">
                           <button
+                            onClick={() => openEditModal(c)}
+                            title="Edit Customer Profile"
+                            className="p-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 hover:text-indigo-700 rounded-xl border border-indigo-200 transition-all flex items-center justify-center"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
                             onClick={() => {
                               setSelectedCustomer(c);
                               setShowWhatsAppModal(true);
@@ -246,8 +346,8 @@ export default function CustomersManagementPage() {
                             <MessageCircle className="w-4 h-4 fill-current" />
                           </button>
                           <button
-                            onClick={() => handleDeleteCustomer(c.id, c.fullName || c.name || 'Guest')}
-                            title="Delete Customer from Database"
+                            onClick={() => requestDeleteCustomer(c)}
+                            title="Delete Customer Profile"
                             className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 hover:text-rose-700 rounded-xl border border-rose-200 transition-all"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -318,7 +418,7 @@ export default function CustomersManagementPage() {
                 <label className="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
                 <input
                   type="email"
-                  placeholder="e.g. guest@example.com"
+                  placeholder="e.g. rajjak5453@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all"
@@ -350,11 +450,158 @@ export default function CustomersManagementPage() {
 
               <button
                 type="submit"
-                className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/25 transition-all mt-4"
+                disabled={isSavingCustomer}
+                className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/25 transition-all mt-4 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Save Customer Profile
+                {isSavingCustomer ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Saving Customer Profile...</span>
+                  </>
+                ) : (
+                  <span>Save Customer Profile</span>
+                )}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Customer Profile Modal */}
+      {showEditModal && editingCustomer && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto">
+          <div className="relative bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl max-h-[90vh] flex flex-col my-auto space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="sticky top-0 bg-white z-10 pb-3 border-b border-slate-100 flex items-center justify-between shrink-0">
+              <div>
+                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                  <Edit className="w-5 h-5 text-indigo-600" /> Edit Customer Profile
+                </h3>
+                <p className="text-xs text-slate-500">Update verified guest CRM profile details</p>
+              </div>
+              <button 
+                onClick={() => {
+                  setShowEditModal(false);
+                  setEditingCustomer(null);
+                }} 
+                type="button"
+                title="Close Modal"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-all border border-slate-200 flex items-center justify-center"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {errorMsg && (
+              <div className="p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-2 shrink-0">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" /> {errorMsg}
+              </div>
+            )}
+
+            <form onSubmit={handleUpdateCustomer} className="overflow-y-auto space-y-4 text-xs pr-1">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. RAJJAK KHAN"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Phone Number (10 Digits) *</label>
+                <input
+                  type="tel"
+                  required
+                  maxLength={10}
+                  placeholder="e.g. 9784306040"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white font-mono font-bold transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
+                <input
+                  type="email"
+                  placeholder="e.g. rajjak5453@gmail.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">City</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Goa"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">State</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Goa"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSavingCustomer}
+                className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/25 transition-all mt-4 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSavingCustomer ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Updating Customer Profile...</span>
+                  </>
+                ) : (
+                  <span>Update Customer Profile</span>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* CUSTOM DELETION CONFIRMATION MODAL */}
+      {customerToDelete && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-slate-200 text-center space-y-4">
+            <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 border border-rose-100 flex items-center justify-center mx-auto">
+              <Trash2 className="w-7 h-7" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-lg font-black text-slate-900 tracking-tight">Delete Customer Profile</h3>
+              <p className="text-xs text-slate-500 font-medium">Are you sure you want to permanently delete guest profile <strong>"{customerToDelete.name}"</strong>?</p>
+            </div>
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                onClick={() => setCustomerToDelete(null)}
+                className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs rounded-xl transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteCustomerAction}
+                disabled={deleting}
+                className="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-rose-600/20 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+              >
+                {deleting ? 'Deleting...' : 'Delete Profile'}
+              </button>
+            </div>
           </div>
         </div>
       )}

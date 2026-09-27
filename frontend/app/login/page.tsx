@@ -62,7 +62,7 @@ export default function AdminLoginPage() {
       });
 
       if (res.success) {
-        setForgotMsg('🎉 Password updated & saved in Turso cloud DB! You can now log in with your new password.');
+        setForgotMsg('🎉 Password updated successfully! You can now log in with your new password.');
         setEmail(forgotEmail);
         setPassword(forgotNewPassword);
         setTimeout(() => {
@@ -95,11 +95,15 @@ export default function AdminLoginPage() {
     setLoading(false);
 
     if (res.success && res.data && res.data.token) {
+      const userData = res.data;
       if (typeof window !== 'undefined') {
-        localStorage.setItem('auth_token', res.data.token);
-        localStorage.setItem('user_info', JSON.stringify(res.data));
-        window.location.href = res.data.isSuperAdmin ? '/super-admin' : '/dashboard';
+        localStorage.setItem('auth_token', userData.token);
+        localStorage.setItem('user_info', JSON.stringify(userData));
       }
+      setSuccessMsg(`🎉 Welcome back, ${userData.fullName || 'User'}! Login successful. Loading control console...`);
+      setTimeout(() => {
+        window.location.href = userData.isSuperAdmin ? '/super-admin' : '/dashboard';
+      }, 1000);
     } else {
       setError(res.message || 'Invalid email or password');
     }
@@ -523,7 +527,7 @@ export default function AdminLoginPage() {
             </div>
 
             <p className="text-xs text-slate-500 leading-relaxed">
-              Select which password you want to reset, enter your registered email address, and enter your new password. The updated password will be saved & synced directly to Turso Cloud DB.
+              Select which password you want to reset, enter your registered email address, and enter your new password. The updated password will be saved & updated securely.
             </p>
 
             {forgotError && (

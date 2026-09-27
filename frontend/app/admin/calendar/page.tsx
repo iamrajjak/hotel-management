@@ -12,6 +12,8 @@ export default function CalendarPage() {
   const [selectedBooking, setSelectedBooking] = useState<CalendarBookingEvent | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
   useEffect(() => {
     loadCalendar(startDate);
   }, [startDate]);
@@ -45,10 +47,10 @@ export default function CalendarPage() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
-      <Sidebar />
+      <Sidebar isOpenMobile={isMobileOpen} onCloseMobile={() => setIsMobileOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header title="Interactive Booking Calendar Matrix" />
+        <Header title="Interactive Booking Calendar Matrix" onMenuClick={() => setIsMobileOpen(true)} />
 
         <main className="p-4 sm:p-8 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
           {/* Executive Dark Calendar Hero Banner */}

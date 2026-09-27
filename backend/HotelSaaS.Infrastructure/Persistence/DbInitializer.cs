@@ -18,7 +18,15 @@ public static class DbInitializer
             "ALTER TABLE Hotels ADD COLUMN ReviewUrl TEXT DEFAULT 'https://g.page/r/your-hotel-review';",
             "ALTER TABLE hotels ADD COLUMN wifi_name TEXT DEFAULT 'Hotel_Guest_WiFi';",
             "ALTER TABLE hotels ADD COLUMN wifi_password TEXT DEFAULT 'Welcome2026';",
-            "ALTER TABLE hotels ADD COLUMN review_url TEXT DEFAULT 'https://g.page/r/your-hotel-review';"
+            "ALTER TABLE hotels ADD COLUMN review_url TEXT DEFAULT 'https://g.page/r/your-hotel-review';",
+            "ALTER TABLE PosOrders ADD COLUMN CustomerId TEXT NULL;",
+            "ALTER TABLE PosOrders ADD COLUMN CustomerName TEXT NULL;",
+            "ALTER TABLE PosOrders ADD COLUMN CustomerPhone TEXT NULL;",
+            "ALTER TABLE PosOrders ADD COLUMN RoomNumber TEXT NULL;",
+            "ALTER TABLE pos_orders ADD COLUMN customer_id TEXT DEFAULT '';",
+            "ALTER TABLE pos_orders ADD COLUMN customer_name TEXT DEFAULT '';",
+            "ALTER TABLE pos_orders ADD COLUMN customer_phone TEXT DEFAULT '';",
+            "ALTER TABLE pos_orders ADD COLUMN room_number TEXT DEFAULT '';"
         };
         foreach (var sql in alterSqls)
         {
@@ -265,6 +273,36 @@ public static class DbInitializer
                 using var cmd3 = conn.CreateCommand();
                 cmd3.CommandText = "ALTER TABLE Profiles ADD COLUMN StaffPasswordHash TEXT;";
                 cmd3.ExecuteNonQuery();
+            }
+            catch { }
+
+            // Seed default hotel if no hotel exists
+            try
+            {
+                if (!db.Hotels.Any())
+                {
+                    var defaultHotelId = Guid.Parse("00000000-0000-0000-0000-000000000001");
+                    var defaultHotel = new Hotel
+                    {
+                        Id = defaultHotelId,
+                        Name = "Jodhpur Royal",
+                        Slug = "jodhpur-royal",
+                        Email = "rajjakkhan5453@gmail.com",
+                        Phone = "09784306040",
+                        Address = "123 Beach Road",
+                        City = "Goa",
+                        State = "Goa",
+                        Country = "India",
+                        Pincode = "403001",
+                        Status = "Active",
+                        WifiName = "Hotel_Guest_WiFi",
+                        WifiPassword = "Welcome2026",
+                        ReviewUrl = "https://g.page/r/your-hotel-review",
+                        HotelCode = "HTL-MAIN"
+                    };
+                    db.Hotels.Add(defaultHotel);
+                    db.SaveChanges();
+                }
             }
             catch { }
 

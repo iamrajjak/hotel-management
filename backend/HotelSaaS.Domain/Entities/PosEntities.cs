@@ -37,6 +37,14 @@ public class PosOrder : TenantEntity
     [ForeignKey(nameof(RoomId))]
     public Room? Room { get; set; }
 
+    public Guid? CustomerId { get; set; }
+    [ForeignKey(nameof(CustomerId))]
+    public Customer? Customer { get; set; }
+
+    public string? CustomerName { get; set; }
+    public string? CustomerPhone { get; set; }
+    public string? RoomNumber { get; set; }
+
     public string? TableNumber { get; set; }
     public string OrderType { get; set; } = "RoomService"; // RoomService, DineIn, Takeaway
     

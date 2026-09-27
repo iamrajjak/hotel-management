@@ -20,7 +20,9 @@ import {
   IndianRupee,
   Briefcase,
   Building,
-  Eye
+  Eye,
+  Edit,
+  Loader2
 } from 'lucide-react';
 
 interface StaffMember {
@@ -54,12 +56,17 @@ interface AttendanceRecord {
 }
 
 export default function StaffPage() {
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [staffList, setStaffList] = useState<StaffMember[]>([]);
   const [attendanceList, setAttendanceList] = useState<AttendanceRecord[]>([]);
   const [activeTab, setActiveTab] = useState<'members' | 'attendance' | 'monthly'>('members');
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null);
+  const [isSavingStaff, setIsSavingStaff] = useState(false);
+  const [isSavingAttendance, setIsSavingAttendance] = useState(false);
   const [monthlySummaryList, setMonthlySummaryList] = useState<any[]>([]);
   const [filterMonth, setFilterMonth] = useState<number>(new Date().getMonth() + 1);
   const [filterYear, setFilterYear] = useState<number>(new Date().getFullYear());
@@ -117,6 +124,7 @@ export default function StaffPage() {
   const [checkOutTime, setCheckOutTime] = useState('18:00');
   const [attendanceStatus, setAttendanceStatus] = useState('Present');
   const [attendanceNotes, setAttendanceNotes] = useState('');
+  const [quickSavingStaffId, setQuickSavingStaffId] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -130,12 +138,13 @@ export default function StaffPage() {
     loadStaffData();
   }, [filterMonth, filterYear]);
 
-  async function loadStaffData() {
+  async function loadStaffData(targetDate?: string) {
     setLoading(true);
     try {
+      const activeDate = targetDate !== undefined ? targetDate : attendanceDate;
       const [staffRes, attRes, monthlyRes] = await Promise.all([
         staffApi.getStaff(),
-        staffApi.getAttendance(),
+        staffApi.getAttendance(activeDate),
         staffApi.getMonthlySummary(filterMonth, filterYear),
       ]);
 
@@ -174,8 +183,25 @@ export default function StaffPage() {
 
   const isHotelOwner = currentUser?.role === 'HotelOwner' || currentUser?.role === 'SuperAdmin' || currentUser?.isSuperAdmin;
 
+  const openEditStaffModal = (staff: StaffMember) => {
+    setEditingStaff(staff);
+    setFullName(staff.fullName || `${staff.firstName || ''} ${staff.lastName || ''}`.trim());
+    setRoleTitle(staff.roleTitle || staff.role || 'Front Desk Executive');
+    setEmail(staff.email || '');
+    setPhoneNumber(staff.phoneNumber || staff.mobile || '');
+    setMonthlySalary(staff.monthlySalary ? staff.monthlySalary.toString() : (staff.salary ? staff.salary.toString() : ''));
+    if (staff.joiningDate) {
+      try {
+        setJoiningDate(new Date(staff.joiningDate).toISOString().split('T')[0]);
+      } catch {}
+    }
+    setErrorMsg('');
+    setShowEditModal(true);
+  };
+
   const handleCreateStaff = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSavingStaff) return;
     setErrorMsg('');
     setSuccessMsg('');
 
@@ -209,9 +235,10 @@ export default function StaffPage() {
     const nameParts = fullName.trim().split(' ');
     const firstName = nameParts[0] || 'Staff';
     const lastName = nameParts.slice(1).join(' ') || '';
+    setIsSavingStaff(true);
 
     try {
-      const res = await staffApi.createStaff({
+      const payload: any = {
         firstName,
         lastName,
         mobile: cleanMobile,
@@ -221,26 +248,36 @@ export default function StaffPage() {
         joiningDate: joiningDate ? new Date(joiningDate).toISOString() : new Date().toISOString(),
         salary: monthlySalary ? parseFloat(monthlySalary) : 0,
         status: 'Active',
-      });
+      };
+      if (editingStaff?.id) {
+        payload.id = editingStaff.id;
+      }
+
+      const res = await staffApi.createStaff(payload);
 
       if (res.success) {
-        setSuccessMsg('Staff member registered successfully!');
+        setSuccessMsg(editingStaff ? 'Staff member updated successfully!' : 'Staff member registered successfully!');
         setShowAddModal(false);
+        setShowEditModal(false);
+        setEditingStaff(null);
         setFullName('');
         setEmail('');
         setPhoneNumber('');
         setMonthlySalary('');
         loadStaffData();
       } else {
-        setErrorMsg(res.message || (res.errors && res.errors.length > 0 ? res.errors.join(', ') : 'Failed to add staff member'));
+        setErrorMsg(res.message || (res.errors && res.errors.length > 0 ? res.errors.join(', ') : 'Failed to save staff member'));
       }
     } catch (err: any) {
       setErrorMsg(err?.message || 'Error saving staff member');
+    } finally {
+      setIsSavingStaff(false);
     }
   };
 
   const handleRecordAttendance = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSavingAttendance) return;
     setErrorMsg('');
     setSuccessMsg('');
 
@@ -249,12 +286,7 @@ export default function StaffPage() {
       return;
     }
 
-    const todayStr = new Date().toISOString().split('T')[0];
-    if (attendanceDate < todayStr) {
-      setErrorMsg('Attendance cannot be marked for past dates. Only today or future dates are allowed.');
-      return;
-    }
-
+    setIsSavingAttendance(true);
     try {
       const res = await staffApi.recordAttendance({
         staffId: selectedStaffId,
@@ -268,29 +300,29 @@ export default function StaffPage() {
       if (res.success) {
         setSuccessMsg(`Attendance marked as ${attendanceStatus} successfully!`);
         setAttendanceNotes('');
-        loadStaffData();
+        await loadStaffData(attendanceDate);
       } else {
         setErrorMsg(res.message || 'Failed to record attendance');
       }
     } catch (err: any) {
       setErrorMsg(err?.message || 'Network error');
+    } finally {
+      setIsSavingAttendance(false);
     }
   };
 
-  const handleQuickStatusChange = async (staffId: string, newStatus: string) => {
+  const handleQuickStatusChange = async (staffId: string, newStatus: string, recordDate?: string) => {
+    if (isSavingAttendance || quickSavingStaffId) return;
     setErrorMsg('');
     setSuccessMsg('');
+    setQuickSavingStaffId(staffId);
 
-    const todayStr = new Date().toISOString().split('T')[0];
-    if (attendanceDate < todayStr) {
-      setErrorMsg('Attendance cannot be marked for past dates. Only today or future dates are allowed.');
-      return;
-    }
+    const targetDate = recordDate ? recordDate.toString().split('T')[0] : attendanceDate;
 
     try {
       const res = await staffApi.recordAttendance({
         staffId,
-        attendanceDate: attendanceDate ? `${attendanceDate}T12:00:00` : new Date().toISOString(),
+        attendanceDate: targetDate ? `${targetDate}T12:00:00` : new Date().toISOString(),
         checkInTime: '09:00',
         checkOutTime: '18:00',
         status: newStatus,
@@ -298,12 +330,14 @@ export default function StaffPage() {
       });
       if (res.success) {
         setSuccessMsg(`Attendance status updated to ${newStatus}!`);
-        loadStaffData();
+        await loadStaffData(targetDate);
       } else {
         setErrorMsg(res.message || 'Failed to update attendance status');
       }
     } catch (err: any) {
       setErrorMsg(err?.message || 'Error updating attendance status');
+    } finally {
+      setQuickSavingStaffId(null);
     }
   };
 
@@ -333,10 +367,10 @@ export default function StaffPage() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
-      <Sidebar userRole={currentUser?.role || 'HotelOwner'} />
+      <Sidebar userRole={currentUser?.role || 'HotelOwner'} isOpenMobile={isMobileOpen} onCloseMobile={() => setIsMobileOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header title="Staff Directory & Attendance Tracking" />
+        <Header title="Staff Directory & Attendance Tracking" onMenuClick={() => setIsMobileOpen(true)} />
 
         <main className="p-4 sm:p-8 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
           {/* Executive Dark Violet Staff Hero Banner */}
@@ -487,7 +521,14 @@ export default function StaffPage() {
                             </span>
                           </td>
                           {isHotelOwner && (
-                            <td className="py-4 px-6 text-right">
+                            <td className="py-4 px-6 text-right space-x-1">
+                              <button
+                                onClick={() => openEditStaffModal(staff)}
+                                className="p-2 rounded-xl text-indigo-600 hover:bg-indigo-50 border border-transparent hover:border-indigo-200 transition-all"
+                                title="Edit Staff Member Details"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
                               <button
                                 onClick={() => handleDeleteStaff(staff)}
                                 className="p-2 rounded-xl text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-all"
@@ -536,8 +577,11 @@ export default function StaffPage() {
                     <input
                       type="date"
                       value={attendanceDate}
-                      min={new Date().toISOString().split('T')[0]}
-                      onChange={(e) => setAttendanceDate(e.target.value)}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setAttendanceDate(val);
+                        loadStaffData(val);
+                      }}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 font-medium text-slate-900"
                     />
                   </div>
@@ -592,9 +636,17 @@ export default function StaffPage() {
 
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs uppercase tracking-widest py-3.5 rounded-xl shadow-lg shadow-emerald-600/25 transition-all mt-2"
+                    disabled={isSavingAttendance}
+                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs uppercase tracking-widest py-3.5 rounded-xl shadow-lg shadow-emerald-600/25 transition-all mt-2 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    Save Attendance Entry
+                    {isSavingAttendance ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <span>Saving Attendance Entry...</span>
+                      </>
+                    ) : (
+                      <span>Save Attendance Entry</span>
+                    )}
                   </button>
                 </form>
               </div>
@@ -643,39 +695,47 @@ export default function StaffPage() {
                             <td className="py-3 px-4">
                               <div className="flex items-center gap-1">
                                 <button
-                                  onClick={() => handleQuickStatusChange(att.staffId, 'Present')}
+                                  disabled={isSavingAttendance || quickSavingStaffId === att.staffId}
+                                  onClick={() => handleQuickStatusChange(att.staffId, 'Present', (att.attendanceDate || att.date))}
                                   title="Mark Present"
-                                  className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-all ${
+                                  className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-all flex items-center gap-1 ${
                                     getStatusName(att.status) === 'Present' ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 border-slate-200'
-                                  }`}
+                                  } disabled:opacity-50`}
                                 >
+                                  {quickSavingStaffId === att.staffId ? <Loader2 className="w-3 h-3 animate-spin text-slate-400" /> : null}
                                   Present ✔️
                                 </button>
                                 <button
-                                  onClick={() => handleQuickStatusChange(att.staffId, 'Absent')}
+                                  disabled={isSavingAttendance || quickSavingStaffId === att.staffId}
+                                  onClick={() => handleQuickStatusChange(att.staffId, 'Absent', (att.attendanceDate || att.date))}
                                   title="Mark Absent"
-                                  className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-all ${
+                                  className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-all flex items-center gap-1 ${
                                     getStatusName(att.status) === 'Absent' ? 'bg-rose-600 text-white border-rose-600' : 'bg-slate-100 text-slate-700 hover:bg-rose-50 border-slate-200'
-                                  }`}
+                                  } disabled:opacity-50`}
                                 >
+                                  {quickSavingStaffId === att.staffId ? <Loader2 className="w-3 h-3 animate-spin text-slate-400" /> : null}
                                   Absent ❌
                                 </button>
                                 <button
-                                  onClick={() => handleQuickStatusChange(att.staffId, 'HalfDay')}
+                                  disabled={isSavingAttendance || quickSavingStaffId === att.staffId}
+                                  onClick={() => handleQuickStatusChange(att.staffId, 'HalfDay', (att.attendanceDate || att.date))}
                                   title="Mark Half Day"
-                                  className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-all ${
+                                  className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-all flex items-center gap-1 ${
                                     getStatusName(att.status) === 'HalfDay' ? 'bg-amber-600 text-white border-amber-600' : 'bg-slate-100 text-slate-700 hover:bg-amber-50 border-slate-200'
-                                  }`}
+                                  } disabled:opacity-50`}
                                 >
+                                  {quickSavingStaffId === att.staffId ? <Loader2 className="w-3 h-3 animate-spin text-slate-400" /> : null}
                                   HalfDay ⏳
                                 </button>
                                 <button
-                                  onClick={() => handleQuickStatusChange(att.staffId, 'Leave')}
+                                  disabled={isSavingAttendance || quickSavingStaffId === att.staffId}
+                                  onClick={() => handleQuickStatusChange(att.staffId, 'Leave', (att.attendanceDate || att.date))}
                                   title="Mark On Leave"
-                                  className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-all ${
+                                  className={`px-2 py-1 rounded-lg text-[10px] font-bold border transition-all flex items-center gap-1 ${
                                     getStatusName(att.status) === 'Leave' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-100 text-slate-700 hover:bg-indigo-50 border-slate-200'
-                                  }`}
+                                  } disabled:opacity-50`}
                                 >
+                                  {quickSavingStaffId === att.staffId ? <Loader2 className="w-3 h-3 animate-spin text-slate-400" /> : null}
                                   Leave 🏖️
                                 </button>
                               </div>
@@ -841,15 +901,18 @@ export default function StaffPage() {
         </main>
       </div>
 
-      {/* CREATE STAFF MODAL */}
-      {showAddModal && (
+      {/* CREATE & EDIT STAFF MODAL */}
+      {(showAddModal || showEditModal) && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center pb-3 border-b border-slate-100">
               <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                <UserPlus className="w-5 h-5 text-violet-600" /> Add New Staff Member
+                <UserPlus className="w-5 h-5 text-violet-600" /> {editingStaff ? 'Edit Staff Member Profile' : 'Add New Staff Member'}
               </h3>
-              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-700">
+              <button 
+                onClick={() => { setShowAddModal(false); setShowEditModal(false); setEditingStaff(null); }} 
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-xl bg-slate-100"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -864,7 +927,7 @@ export default function StaffPage() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
-                  placeholder="e.g. Ramesh Kumar"
+                  placeholder="e.g. Rajjak Khan"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-medium"
                 />
               </div>
@@ -905,7 +968,7 @@ export default function StaffPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="staff@hotel.com"
+                    placeholder="rajjak5453@gmail.com"
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-medium"
                   />
                 </div>
@@ -936,9 +999,17 @@ export default function StaffPage() {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-extrabold text-xs uppercase tracking-widest py-3.5 rounded-xl shadow-lg shadow-violet-600/25 transition-all mt-4"
+                disabled={isSavingStaff}
+                className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white font-extrabold text-xs uppercase tracking-widest py-3.5 rounded-xl shadow-lg shadow-violet-600/25 transition-all mt-4 flex items-center justify-center gap-2"
               >
-                Register Staff Member
+                {isSavingStaff ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Saving Profile...</span>
+                  </>
+                ) : (
+                  <span>{editingStaff ? 'Save Changes' : 'Register Staff Member'}</span>
+                )}
               </button>
             </form>
           </div>

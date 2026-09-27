@@ -13,6 +13,7 @@ export default function FinancePage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [activeTab, setActiveTab] = useState<'invoices' | 'payments'>('invoices');
   const [loading, setLoading] = useState(true);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Modals
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
@@ -137,10 +138,10 @@ export default function FinancePage() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-800 font-sans">
-      <Sidebar />
+      <Sidebar isOpenMobile={isMobileOpen} onCloseMobile={() => setIsMobileOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header title="Billing, Invoices & Financial Settlement" />
+        <Header title="Billing, Invoices & Financial Settlement" onMenuClick={() => setIsMobileOpen(true)} />
 
         <main className="p-4 sm:p-8 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
           {/* Executive Dark Emerald Hero Banner */}

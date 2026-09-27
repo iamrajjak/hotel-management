@@ -78,7 +78,7 @@ export default function Sidebar({
     { label: 'Guests', href: '/admin/customers', icon: Users },
     { label: 'Front Desk', href: '/admin/checkin-checkout', icon: LogOut },
     { label: 'Restaurant / KOT', href: '/admin/restaurant', icon: Utensils },
-    ...(isOwner ? [{ label: 'Expenses', href: '/admin/expenses', icon: Receipt }] : []),
+    { label: 'Expenses', href: '/admin/expenses', icon: Receipt },
     { label: 'Staff & Attendance', href: '/admin/staff', icon: UserCheck },
     ...(isOwner ? [{ label: 'Reports', href: '/admin/reports', icon: BarChart3 }] : []),
     ...(isOwner ? [{ label: 'Payments', href: '/admin/finance', icon: CreditCard }] : []),

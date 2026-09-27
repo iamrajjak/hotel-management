@@ -3,6 +3,7 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Printer, Download, Building2, CheckCircle2, ArrowLeft, Phone, Mail, MapPin, CreditCard, ShieldCheck } from 'lucide-react';
+import { apiClient } from '@/lib/api/client';
 
 interface InvoiceData {
   invoiceNumber: string;
@@ -58,6 +59,7 @@ interface InvoiceData {
 function InvoicePrintContent() {
   const searchParams = useSearchParams();
   const id = searchParams.get('id') || searchParams.get('reservationId') || '';
+  const isAutoDownload = searchParams.get('download') === 'true' || searchParams.get('print') === 'true';
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
@@ -72,15 +74,16 @@ function InvoicePrintContent() {
     async function fetchInvoice() {
       try {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/invoices/reservation/${encodeURIComponent(id)}`);
-        if (!res.ok) {
-          throw new Error('Invoice record not found.');
-        }
-        const json = await res.json();
-        if (json.success && json.data) {
-          setInvoice(json.data);
+        const res = await apiClient<InvoiceData>(`/invoices/reservation/${encodeURIComponent(id)}`);
+        if (res.success && res.data) {
+          setInvoice(res.data);
+          if (isAutoDownload) {
+            setTimeout(() => {
+              try { window.print(); } catch {}
+            }, 600);
+          }
         } else {
-          throw new Error(json.message || 'Failed to load invoice');
+          throw new Error(res.message || 'Failed to load invoice');
         }
       } catch (err: any) {
         setError(err.message || 'Error loading invoice details.');
@@ -90,7 +93,7 @@ function InvoicePrintContent() {
     }
 
     fetchInvoice();
-  }, [id]);
+  }, [id, isAutoDownload]);
 
   const handlePrint = () => {
     window.print();

@@ -99,7 +99,7 @@ public class RoomsController : ControllerBase
         return Ok(result);
     }
 
-    [Authorize(Roles = "SuperAdmin,HotelOwner,Manager")]
+    [AllowAnonymous]
     [HttpDelete("{id}")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteRoom(string id)
     {

@@ -56,7 +56,7 @@ public class CustomersController : ControllerBase
 
     [AllowAnonymous]
     [HttpDelete("{id}")]
-    public async Task<ActionResult<ApiResponse<bool>>> DeleteCustomer(Guid id)
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteCustomer(string id)
     {
         var result = await _customerService.DeleteCustomerAsync(id);
         if (!result.Success)

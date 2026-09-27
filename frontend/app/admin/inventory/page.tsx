@@ -11,6 +11,7 @@ export default function InventoryPage() {
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedRestockItem, setSelectedRestockItem] = useState<InventoryItem | null>(null);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // New Item Form
   const [itemName, setItemName] = useState('');
@@ -81,10 +82,10 @@ export default function InventoryPage() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
-      <Sidebar />
+      <Sidebar isOpenMobile={isMobileOpen} onCloseMobile={() => setIsMobileOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header title="Inventory Control & Stock Management" />
+        <Header title="Inventory Control & Stock Management" onMenuClick={() => setIsMobileOpen(true)} />
 
         <main className="p-4 sm:p-8 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
           {/* Executive Dark Inventory Hero Banner */}

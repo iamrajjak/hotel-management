@@ -11,6 +11,7 @@ export default function HousekeepingPage() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // New Task Form
   const [roomId, setRoomId] = useState('');
@@ -74,10 +75,10 @@ export default function HousekeepingPage() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
-      <Sidebar />
+      <Sidebar isOpenMobile={isMobileOpen} onCloseMobile={() => setIsMobileOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header title="Housekeeping & Room Hygiene Matrix" />
+        <Header title="Housekeeping & Room Hygiene Matrix" onMenuClick={() => setIsMobileOpen(true)} />
 
         <main className="p-4 sm:p-8 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
           {/* Executive Dark Teal Housekeeping Hero Banner */}
@@ -241,7 +242,7 @@ export default function HousekeepingPage() {
                   type="text"
                   value={assignedTo}
                   onChange={(e) => setAssignedTo(e.target.value)}
-                  placeholder="e.g. Sunita Devi"
+                  placeholder="e.g. Rajjak"
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none"
                 />
               </div>

@@ -91,6 +91,17 @@ public class ReservationsController : ControllerBase
     }
 
     [AllowAnonymous]
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ApiResponse<ReservationDto>>> UpdateReservation(string id, [FromBody] CreateReservationDto request)
+    {
+        var result = await _reservationService.UpdateReservationAsync(id, request);
+        if (!result.Success)
+            return BadRequest(result);
+
+        return Ok(result);
+    }
+
+    [AllowAnonymous]
     [HttpDelete("{id}")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteReservation(string id)
     {

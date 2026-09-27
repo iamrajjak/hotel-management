@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import { posApi, roomApi, reservationApi, PosCategory, PosMenuItem, PosOrder, Room, Reservation } from '@/lib/api/services';
-import { UtensilsCrossed, ShoppingBag, Plus, Minus, Trash2, Edit2, CheckCircle2, Clock, ChefHat, BedDouble, Send, X, Printer, Receipt } from 'lucide-react';
+import { UtensilsCrossed, ShoppingBag, Plus, Minus, Trash2, Edit2, CheckCircle2, Clock, ChefHat, BedDouble, Send, X, Printer, Receipt, Loader2 } from 'lucide-react';
 
 interface CartItem {
   menuItem: PosMenuItem;
@@ -22,6 +22,7 @@ export default function RestaurantPosPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [activeTab, setActiveTab] = useState<'pos' | 'kot'>('pos');
   const [loading, setLoading] = useState(true);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Cart State
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -39,12 +40,19 @@ export default function RestaurantPosPage() {
   const [newItemCategory, setNewItemCategory] = useState('Starters & Appetizers');
   const [newItemPrice, setNewItemPrice] = useState('');
   const [newItemDescription, setNewItemDescription] = useState('');
+  const [isSavingDish, setIsSavingDish] = useState(false);
 
   // Delete Confirmation Modal State
   const [deletingItem, setDeletingItem] = useState<PosMenuItem | null>(null);
 
   // Printable Food Bill / Receipt Modal State
   const [selectedReceiptOrder, setSelectedReceiptOrder] = useState<PosOrder | null>(null);
+
+  // Custom WhatsApp Sharing Modal State
+  const [whatsappModalOrder, setWhatsappModalOrder] = useState<PosOrder | null>(null);
+  const [whatsappPhoneInput, setWhatsappPhoneInput] = useState<string>('');
+  const [whatsappGuestName, setWhatsappGuestName] = useState<string>('');
+  const [whatsappRoomNumber, setWhatsappRoomNumber] = useState<string>('');
 
   useEffect(() => {
     loadPosData();
@@ -103,6 +111,70 @@ export default function RestaurantPosPage() {
   const tax = subtotal * 0.05; // 5% GST
   const total = subtotal + tax;
 
+  const openWhatsappModal = (order: PosOrder) => {
+    const matchingRoom = rooms.find((r) => r.id === order.roomId || r.roomNumber === order.roomNumber);
+
+    // Search reservations by reservationId, roomId, roomNumber, or matching room
+    const activeRes = reservations.find(
+      (r) =>
+        (order.reservationId && r.id === order.reservationId) ||
+        (order.roomId && r.roomId === order.roomId) ||
+        (order.roomNumber && (r.roomNumber === order.roomNumber || r.roomNumber === order.roomNumber.replace('Room ', ''))) ||
+        (matchingRoom && (r.roomId === matchingRoom.id || r.roomNumber === matchingRoom.roomNumber))
+    );
+
+    let phone = activeRes?.customerPhone || order.guestPhone || '';
+    let name = activeRes?.customerName || order.guestName || 'Guest';
+    let room = order.roomNumber || activeRes?.roomNumber || matchingRoom?.roomNumber || '';
+
+    // Clean phone number (extract digits only)
+    phone = (phone || '').replace(/[^0-9]/g, '');
+    if (phone.startsWith('91') && phone.length === 12) {
+      phone = phone.slice(2);
+    }
+
+    setWhatsappPhoneInput(phone);
+    setWhatsappGuestName(name);
+    setWhatsappRoomNumber(room);
+    setWhatsappModalOrder(order);
+  };
+
+  const executeSendWhatsappMessage = () => {
+    if (!whatsappModalOrder) return;
+    const cleanPhone = whatsappPhoneInput.replace(/[^0-9]/g, '');
+    if (!cleanPhone) {
+      setErrorMsg('Please enter a valid 10-digit mobile number for WhatsApp');
+      return;
+    }
+
+    const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+
+    const itemsText = (whatsappModalOrder.orderItems || [])
+      .map((i) => `• ${i.quantity}x ${i.itemName || 'Food Item'} - ₹${i.subtotal}`)
+      .join('\n');
+
+    const msg = `🏨 *JODHPUR ROYAL HOTEL*
+*Restaurant & Food Service Bill*
+━━━━━━━━━━━━━━━━━━━━━
+🧾 *KOT Order:* ${whatsappModalOrder.orderNumber}
+📌 *Service Type:* ${whatsappModalOrder.orderType} ${whatsappRoomNumber ? `(Room ${whatsappRoomNumber})` : whatsappModalOrder.tableNumber ? `(Table ${whatsappModalOrder.tableNumber})` : ''}
+👤 *Guest Name:* ${whatsappGuestName || 'Guest'}
+
+📋 *Food Items Ordered:*
+${itemsText}
+━━━━━━━━━━━━━━━━━━━━━
+💵 *Subtotal:* ₹${whatsappModalOrder.subtotal}
+📊 *GST (5%):* ₹${whatsappModalOrder.tax ? Number(whatsappModalOrder.tax).toFixed(2) : '0.00'}
+💰 *Grand Total:* ₹${whatsappModalOrder.total}
+💳 *Payment Mode:* ${whatsappModalOrder.paymentStatus === 'ChargedToRoom' ? 'Added to Guest Room Checkout Bill (Pay at Checkout)' : 'Paid in Full (Settled)'}
+━━━━━━━━━━━━━━━━━━━━━
+Thank you for dining with us! Have a wonderful day! 🙏✨`;
+
+    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+    setWhatsappModalOrder(null);
+  };
+
   const handleSendKot = async () => {
     if (cart.length === 0) return;
     setErrorMsg('');
@@ -110,31 +182,74 @@ export default function RestaurantPosPage() {
 
     // Find active reservation for selected room
     const matchingRoom = rooms.find((r) => r.id === selectedRoomId);
-    const matchingRes = reservations.find((r) => r.roomId === selectedRoomId && r.bookingStatus === 'CheckedIn');
+    const targetRoomNum = (matchingRoom?.roomNumber || '').toString().replace('Room ', '').trim();
+
+    const matchingRes = reservations.find(
+      (r) =>
+        r.bookingStatus !== 'CheckedOut' &&
+        r.bookingStatus !== 'Cancelled' &&
+        (
+          (targetRoomNum && (
+            r.roomNumber === targetRoomNum || 
+            r.roomNumber === `Room ${targetRoomNum}` || 
+            (r.roomNumber || '').toString().replace('Room ', '').trim() === targetRoomNum
+          )) ||
+          (matchingRoom && r.roomId === matchingRoom.id) ||
+          (selectedRoomId && r.roomId === selectedRoomId)
+        )
+    );
 
     const res = await posApi.createOrder({
       reservationId: matchingRes?.id || null,
-      roomId: selectedRoomId || null,
+      roomId: orderType === 'RoomService' ? (selectedRoomId || null) : null,
       tableNumber: orderType === 'DineIn' ? tableNumber : null,
       orderType,
       chargeToRoom: orderType === 'RoomService' && chargeToRoom && !!matchingRes,
+      roomNumber: matchingRoom?.roomNumber || matchingRes?.roomNumber || '',
+      customerName: matchingRes?.customerName || '',
+      customerPhone: matchingRes?.customerPhone || '',
       items: cart.map((c) => ({
         menuItemId: c.menuItem.id,
         quantity: c.quantity,
         notes: c.notes || null,
+        itemName: c.menuItem.name,
+        unitPrice: c.menuItem.price,
       })),
-    });
+    } as any);
 
     if (res.success && res.data) {
-      const createdOrder = res.data;
+      const rawOrder = res.data;
+      const enrichedOrder: PosOrder = {
+        ...rawOrder,
+        orderItems:
+          rawOrder.orderItems && rawOrder.orderItems.length > 0
+            ? rawOrder.orderItems
+            : cart.map((c, idx) => ({
+                id: `item-${idx}`,
+                menuItemId: c.menuItem.id,
+                itemName: c.menuItem.name,
+                unitPrice: c.menuItem.price,
+                quantity: c.quantity,
+                subtotal: c.menuItem.price * c.quantity,
+                notes: c.notes || '',
+              })),
+        guestName: rawOrder.guestName || matchingRes?.customerName || 'Guest',
+        guestPhone: rawOrder.guestPhone || matchingRes?.customerPhone || '',
+        roomNumber: rawOrder.roomNumber || matchingRoom?.roomNumber || '',
+        subtotal: rawOrder.subtotal || subtotal,
+        tax: rawOrder.tax || tax,
+        total: rawOrder.total || total,
+        paymentStatus: chargeToRoom && matchingRes ? 'ChargedToRoom' : 'Paid',
+      };
+
       setSuccessMsg(
-        `KOT ticket ${createdOrder.orderNumber} sent to Chef!` +
-          (chargeToRoom && matchingRes ? ` ₹${createdOrder.total.toLocaleString()} charged directly to Room Folio Bill.` : '')
+        `KOT ticket ${enrichedOrder.orderNumber} sent to Chef!` +
+          (chargeToRoom && matchingRes ? ` ₹${enrichedOrder.total.toLocaleString()} added to Room ${enrichedOrder.roomNumber} checkout bill.` : ' Payment Settled (Paid in Full).')
       );
       setCart([]);
       loadPosData();
-      // Auto open printable receipt modal
-      setSelectedReceiptOrder(createdOrder);
+      // Auto open printable receipt modal with WhatsApp option
+      setSelectedReceiptOrder(enrichedOrder);
     } else if (res.success) {
       setSuccessMsg('KOT sent to kitchen successfully!');
       setCart([]);
@@ -172,87 +287,90 @@ export default function RestaurantPosPage() {
 
   const handleSaveMenuItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newItemName.trim()) return;
+    if (!newItemName.trim() || isSavingDish) return;
     const priceNum = parseFloat(newItemPrice) || 250;
+    setIsSavingDish(true);
 
-    if (editingItemId) {
-      const res = await posApi.updateMenuItem(editingItemId, {
-        name: newItemName.trim(),
-        categoryName: newItemCategory,
-        price: priceNum,
-        description: newItemDescription.trim(),
-        isAvailable: true,
-      });
-
-      if (res.success) {
-        setSuccessMsg(`Dish "${newItemName}" updated in database!`);
-      } else {
-        // Fallback local update if API fails
-        setCategories((prev) =>
-          prev.map((c) => ({
-            ...c,
-            menuItems: c.menuItems.map((m) =>
-              m.id === editingItemId ? { ...m, name: newItemName.trim(), price: priceNum, description: newItemDescription.trim() } : m
-            ),
-          }))
-        );
-        setSuccessMsg(`Dish "${newItemName}" updated successfully!`);
-      }
-    } else {
-      const res = await posApi.createMenuItem({
-        name: newItemName.trim(),
-        categoryName: newItemCategory,
-        price: priceNum,
-        description: newItemDescription.trim(),
-      });
-
-      if (res.success) {
-        setSuccessMsg(`Food Dish "${newItemName}" added & saved to Database!`);
-      } else {
-        // Fallback local addition
-        const newItem: PosMenuItem = {
-          id: `m-custom-${Date.now()}`,
-          categoryId: activeCategoryId || 'cat-starters',
-          categoryName: newItemCategory,
+    try {
+      if (editingItemId) {
+        const res = await posApi.updateMenuItem(editingItemId, {
           name: newItemName.trim(),
-          description: newItemDescription.trim() || 'Delicious freshly prepared dish',
+          categoryName: newItemCategory,
           price: priceNum,
+          description: newItemDescription.trim(),
           isAvailable: true,
-        };
-        setCategories((prev) => {
-          const targetCat = prev.find((c) => c.name.toLowerCase() === newItemCategory.toLowerCase() || c.id === activeCategoryId);
-          if (targetCat) {
-            return prev.map((c) => (c.id === targetCat.id ? { ...c, menuItems: [newItem, ...c.menuItems] } : c));
-          } else {
-            return [
-              ...prev,
-              {
-                id: `cat-${Date.now()}`,
-                name: newItemCategory,
-                slug: newItemCategory.toLowerCase().replace(/\s+/g, '-'),
-                displayOrder: prev.length + 1,
-                menuItems: [newItem],
-              },
-            ];
-          }
         });
-        setSuccessMsg(`Food Dish "${newItemName}" added to Menu!`);
-      }
-    }
 
-    setNewItemName('');
-    setNewItemPrice('');
-    setNewItemDescription('');
-    setShowAddMenuModal(false);
-    loadPosData();
-    setTimeout(() => setSuccessMsg(''), 4000);
+        if (res.success) {
+          setSuccessMsg(`Dish "${newItemName}" updated successfully!`);
+        } else {
+          setCategories((prev) =>
+            prev.map((c) => ({
+              ...c,
+              menuItems: c.menuItems.map((m) =>
+                m.id === editingItemId ? { ...m, name: newItemName.trim(), price: priceNum, description: newItemDescription.trim() } : m
+              ),
+            }))
+          );
+          setSuccessMsg(`Dish "${newItemName}" updated successfully!`);
+        }
+      } else {
+        const res = await posApi.createMenuItem({
+          name: newItemName.trim(),
+          categoryName: newItemCategory,
+          price: priceNum,
+          description: newItemDescription.trim(),
+        });
+
+        if (res.success) {
+          setSuccessMsg(`Food Dish "${newItemName}" added to Menu!`);
+        } else {
+          const newItem: PosMenuItem = {
+            id: `m-custom-${Date.now()}`,
+            categoryId: activeCategoryId || 'cat-starters',
+            categoryName: newItemCategory,
+            name: newItemName.trim(),
+            description: newItemDescription.trim() || 'Delicious freshly prepared dish',
+            price: priceNum,
+            isAvailable: true,
+          };
+          setCategories((prev) => {
+            const targetCat = prev.find((c) => c.name.toLowerCase() === newItemCategory.toLowerCase() || c.id === activeCategoryId);
+            if (targetCat) {
+              return prev.map((c) => (c.id === targetCat.id ? { ...c, menuItems: [newItem, ...c.menuItems] } : c));
+            } else {
+              return [
+                ...prev,
+                {
+                  id: `cat-${Date.now()}`,
+                  name: newItemCategory,
+                  slug: newItemCategory.toLowerCase().replace(/\s+/g, '-'),
+                  displayOrder: prev.length + 1,
+                  menuItems: [newItem],
+                },
+              ];
+            }
+          });
+          setSuccessMsg(`Food Dish "${newItemName}" added to Menu!`);
+        }
+      }
+
+      setNewItemName('');
+      setNewItemPrice('');
+      setNewItemDescription('');
+      setShowAddMenuModal(false);
+      await loadPosData();
+      setTimeout(() => setSuccessMsg(''), 4000);
+    } finally {
+      setIsSavingDish(false);
+    }
   };
 
   const handleDeleteMenuItem = async () => {
     if (!deletingItem) return;
     const res = await posApi.deleteMenuItem(deletingItem.id);
     if (res.success) {
-      setSuccessMsg(`Dish "${deletingItem.name}" deleted from Menu database!`);
+      setSuccessMsg(`Dish "${deletingItem.name}" deleted from Menu!`);
     } else {
       setCategories((prev) =>
         prev.map((c) => ({
@@ -271,10 +389,10 @@ export default function RestaurantPosPage() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
-      <Sidebar />
+      <Sidebar isOpenMobile={isMobileOpen} onCloseMobile={() => setIsMobileOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header title="Restaurant POS & Kitchen Order Tickets (KOT)" />
+        <Header title="Restaurant POS & Kitchen Order Tickets (KOT)" onMenuClick={() => setIsMobileOpen(true)} />
 
         <main className="p-4 sm:p-8 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
           {/* Executive Dark Amber POS Hero Banner */}
@@ -450,29 +568,106 @@ export default function RestaurantPosPage() {
 
                 {/* Destination Details */}
                 {orderType === 'RoomService' && (
-                  <div className="mb-4 space-y-2">
-                    <label className="block text-xs font-semibold text-slate-400">Select Guest Room</label>
-                    <select
-                      value={selectedRoomId}
-                      onChange={(e) => setSelectedRoomId(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:border-indigo-500"
-                    >
-                      {rooms.map((r) => (
-                        <option key={r.id} value={r.id}>
-                          Room {r.roomNumber} ({r.status})
-                        </option>
-                      ))}
-                    </select>
+                  <div className="mb-4 space-y-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-400 mb-1">Select Guest Room</label>
+                      <select
+                        value={selectedRoomId}
+                        onChange={(e) => setSelectedRoomId(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-bold focus:border-indigo-500"
+                      >
+                        {rooms.map((r) => {
+                          const hasRes = reservations.some(
+                            (res) =>
+                              (res.roomId === r.id || res.roomNumber === r.roomNumber) &&
+                              res.bookingStatus !== 'CheckedOut' &&
+                              res.bookingStatus !== 'Cancelled'
+                          );
+                          return (
+                            <option key={r.id} value={r.id}>
+                              Room {r.roomNumber} ({r.status}) {hasRes ? '• Occupied Guest' : ''}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
 
-                    <label className="flex items-center gap-2 text-xs text-indigo-400 cursor-pointer pt-1">
-                      <input
-                        type="checkbox"
-                        checked={chargeToRoom}
-                        onChange={(e) => setChargeToRoom(e.target.checked)}
-                        className="rounded accent-indigo-600"
-                      />
-                      <span>Directly charge to Guest Room Folio Bill</span>
-                    </label>
+                    {/* Auto-Fetched Checked-In Guest Info Card */}
+                    {(() => {
+                      const matchingRoom = rooms.find((r) => r.id === selectedRoomId);
+                      const cleanTargetRoomNum = (matchingRoom?.roomNumber || '').toString().replace('Room ', '').trim();
+                      
+                      const activeRes = reservations.find((r) => {
+                        if (r.bookingStatus === 'CheckedOut' || r.bookingStatus === 'Cancelled') return false;
+                        
+                        const cleanResRoomNum = (r.roomNumber || '').toString().replace('Room ', '').trim();
+                        
+                        // 1. Primary Match: exact Room Number match
+                        if (cleanTargetRoomNum && cleanResRoomNum === cleanTargetRoomNum) return true;
+                        
+                        // 2. Secondary Match: exact Room ID match
+                        if (matchingRoom && r.roomId === matchingRoom.id) return true;
+                        if (selectedRoomId && r.roomId === selectedRoomId) return true;
+
+                        return false;
+                      });
+
+                      if (activeRes) {
+                        return (
+                          <div className="bg-emerald-950/60 border border-emerald-500/30 rounded-xl p-3 text-xs space-y-1">
+                            <div className="flex justify-between items-center">
+                              <span className="font-extrabold text-emerald-300">👤 Guest: {activeRes.customerName || 'Guest'}</span>
+                              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold border border-emerald-500/30">
+                                Checked-In
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-slate-300 flex items-center gap-1 font-mono">
+                              <span>📱 WhatsApp:</span>
+                              <span className="font-bold text-white">{activeRes.customerPhone ? `+91 ${activeRes.customerPhone}` : 'N/A'}</span>
+                            </p>
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div className="bg-amber-950/60 border border-amber-500/30 rounded-xl p-2.5 text-[11px] text-amber-300 font-medium">
+                            ⚠️ Room {matchingRoom?.roomNumber || ''} has no active checked-in booking.
+                          </div>
+                        );
+                      }
+                    })()}
+
+                    {/* Payment Mode Selector */}
+                    <div className="space-y-1.5 pt-1">
+                      <label className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                        Payment Mode / Status
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setChargeToRoom(true)}
+                          className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 ${
+                            chargeToRoom
+                              ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/20'
+                              : 'bg-slate-950 text-slate-400 border-slate-800 hover:bg-slate-900'
+                          }`}
+                        >
+                          <span>🏨 Room Folio</span>
+                          <span className="text-[9px] opacity-80">(Pay at Checkout)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setChargeToRoom(false)}
+                          className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 ${
+                            !chargeToRoom
+                              ? 'bg-emerald-600 text-white border-emerald-500 shadow-md shadow-emerald-600/20'
+                              : 'bg-slate-950 text-slate-400 border-slate-800 hover:bg-slate-900'
+                          }`}
+                        >
+                          <span>💳 Pay Now</span>
+                          <span className="text-[9px] opacity-80">(Cash / UPI)</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
 
@@ -729,21 +924,23 @@ export default function RestaurantPosPage() {
 
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Select Food Category *</label>
-                    <input
-                      type="text"
+                    <select
                       required
-                      list="category-suggestions"
-                      placeholder="Starters & Appetizers, Main Course, Beverages..."
                       value={newItemCategory}
                       onChange={(e) => setNewItemCategory(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-bold focus:outline-none focus:border-indigo-600"
-                    />
-                    <datalist id="category-suggestions">
-                      <option value="Starters & Appetizers" />
-                      <option value="Main Course" />
-                      <option value="Beverages & Drinks" />
-                      <option value="Desserts & Breads" />
-                    </datalist>
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-bold focus:outline-none focus:border-indigo-600 cursor-pointer"
+                    >
+                      <option value="Starters & Appetizers">Starters & Appetizers</option>
+                      <option value="Main Course (Veg)">Main Course (Veg)</option>
+                      <option value="Main Course (Non-Veg)">Main Course (Non-Veg)</option>
+                      <option value="Indian Breads & Naan">Indian Breads & Naan</option>
+                      <option value="Rice & Biryani">Rice & Biryani</option>
+                      <option value="Chinese & Fast Food">Chinese & Fast Food</option>
+                      <option value="Soups & Salads">Soups & Salads</option>
+                      <option value="Breakfast & South Indian">Breakfast & South Indian</option>
+                      <option value="Desserts & Sweets">Desserts & Sweets</option>
+                      <option value="Beverages & Drinks">Beverages & Drinks</option>
+                    </select>
                   </div>
 
                   <div>
@@ -780,9 +977,10 @@ export default function RestaurantPosPage() {
                     </button>
                     <button
                       type="submit"
-                      className="py-3 rounded-xl bg-emerald-600 text-white font-extrabold hover:bg-emerald-500 shadow-md shadow-emerald-600/30 uppercase tracking-wider text-xs"
+                      disabled={isSavingDish}
+                      className="py-3 rounded-xl bg-emerald-600 text-white font-extrabold hover:bg-emerald-500 shadow-md shadow-emerald-600/30 uppercase tracking-wider text-xs flex items-center justify-center gap-2"
                     >
-                      {editingItemId ? 'Save Changes' : 'Save to Menu DB'}
+                      {isSavingDish ? <Loader2 className="w-4 h-4 animate-spin" /> : (editingItemId ? 'Save Changes' : 'Save Dish')}
                     </button>
                   </div>
                 </form>
@@ -928,7 +1126,7 @@ export default function RestaurantPosPage() {
                 </div>
 
                 {/* Modal Actions */}
-                <div className="grid grid-cols-2 gap-3 pt-2">
+                <div className="grid grid-cols-3 gap-2 pt-2">
                   <button
                     onClick={() => setSelectedReceiptOrder(null)}
                     className="py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition-all text-xs"
@@ -936,10 +1134,94 @@ export default function RestaurantPosPage() {
                     Close
                   </button>
                   <button
-                    onClick={() => window.print()}
-                    className="py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all"
+                    onClick={() => openWhatsappModal(selectedReceiptOrder)}
+                    className="py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/20 transition-all"
                   >
-                    <Printer className="w-4 h-4" /> Print Food Bill 🖨️
+                    <span>WhatsApp Bill 💬</span>
+                  </button>
+                  <button
+                    onClick={() => window.print()}
+                    className="py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-lg shadow-amber-500/20 transition-all"
+                  >
+                    <Printer className="w-4 h-4" /> Print Bill 🖨️
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* CUSTOM WHATSAPP SHARING MODAL */}
+          {whatsappModalOrder && (
+            <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+              <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5 animate-in zoom-in-95 duration-200 relative text-slate-900">
+                <div className="flex justify-between items-start border-b border-slate-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 rounded-2xl bg-emerald-100 text-emerald-700">
+                      <Send className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-black text-slate-900 tracking-tight">Send WhatsApp Food Bill</h3>
+                      <p className="text-[11px] text-slate-500 font-semibold">Active Occupied Guest Receipt Sharing</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setWhatsappModalOrder(null)} className="p-1.5 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-900">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Occupied Guest & Room Summary Card */}
+                <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-extrabold text-emerald-900">
+                      {whatsappRoomNumber ? `Room ${whatsappRoomNumber}` : whatsappModalOrder.tableNumber ? `Table ${whatsappModalOrder.tableNumber}` : 'POS Order'}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-extrabold text-[10px] uppercase">
+                      Currently Occupied Guest
+                    </span>
+                  </div>
+
+                  <div className="border-t border-emerald-200/60 pt-2 grid grid-cols-2 gap-2 text-slate-700">
+                    <div>
+                      <span className="text-[10px] text-emerald-700 font-bold block uppercase">Guest Name</span>
+                      <span className="font-bold text-slate-900">{whatsappGuestName}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-emerald-700 font-bold block uppercase">Order Total</span>
+                      <span className="font-black text-emerald-800 font-mono text-sm">₹{whatsappModalOrder.total}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-xs">
+                  <label className="block font-bold text-slate-700">Guest WhatsApp Mobile Number *</label>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-3 font-bold text-slate-400 text-xs">+91</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={whatsappPhoneInput}
+                      onChange={(e) => setWhatsappPhoneInput(e.target.value.replace(/[^0-9]/g, ''))}
+                      placeholder="9784306044"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-xl pl-12 pr-3.5 py-3 text-slate-900 font-mono font-black text-sm focus:outline-none focus:border-emerald-600"
+                    />
+                  </div>
+                  <p className="text-[11px] text-slate-500 italic">
+                    * Message will be sent directly to the active checked-in guest. Checked-out guests will not receive messages.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <button
+                    onClick={() => setWhatsappModalOrder(null)}
+                    className="py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={executeSendWhatsappMessage}
+                    className="py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30"
+                  >
+                    <span>Open WhatsApp 🚀</span>
                   </button>
                 </div>
               </div>

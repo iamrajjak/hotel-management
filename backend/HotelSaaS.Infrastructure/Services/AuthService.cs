@@ -190,17 +190,17 @@ public class AuthService : IAuthService
 		}
 
 		// Purge stale local profile if present from previous local state so DB insert never conflicts
-		var staleLocal = await _db.Profiles.FirstOrDefaultAsync(p => p.Email != null && p.Email.Trim().ToLower() == normalizedEmail);
+		var staleLocal = await _db.Profiles.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Email != null && p.Email.Trim().ToLower() == normalizedEmail);
 		if (staleLocal != null)
 		{
 			_db.Profiles.Remove(staleLocal);
 			await _db.SaveChangesAsync();
 		}
 
-		var existingHotelSlug = await _db.Hotels.AnyAsync(h => h.Slug.ToLower() == rawSlug);
-		if (existingHotelSlug)
+		var baseSlug = rawSlug;
+		while (await _db.Hotels.IgnoreQueryFilters().AnyAsync(h => h.Slug.ToLower() == rawSlug))
 		{
-			rawSlug = $"{rawSlug}-{Random.Shared.Next(100, 999)}";
+			rawSlug = $"{baseSlug}-{Random.Shared.Next(100, 999)}";
 		}
 
 		Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? transaction = null;
@@ -222,6 +222,12 @@ public class AuthService : IAuthService
 				: 0;
 
 			var unifiedNextNumber = Math.Max(Math.Max(tursoMaxHotel, tursoMaxProfile), Math.Max(localMaxHotel, localMaxProfile)) + 1;
+
+			while (await _db.Hotels.IgnoreQueryFilters().AnyAsync(h => h.Id == Guid.Parse($"00000000-0000-0000-0000-{unifiedNextNumber:D12}")) ||
+				   await _db.Profiles.IgnoreQueryFilters().AnyAsync(p => p.Id == Guid.Parse($"00000000-0000-0000-0001-{unifiedNextNumber:D12}")))
+			{
+				unifiedNextNumber++;
+			}
 
 			var nextHotelGuid = Guid.Parse($"00000000-0000-0000-0000-{unifiedNextNumber:D12}");
 			var ownerProfileGuid = Guid.Parse($"00000000-0000-0000-0001-{unifiedNextNumber:D12}");

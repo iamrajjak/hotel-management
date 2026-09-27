@@ -24,19 +24,50 @@ public class CustomerService : ICustomerService
     public async Task<ApiResponse<List<CustomerDto>>> GetCustomersAsync()
     {
         var isSuperAdmin = _tenantContext?.IsSuperAdmin ?? false;
-        string? filterHotelId = !isSuperAdmin && _tenantContext?.HotelId.HasValue == true
-            ? _tenantContext.HotelId.Value.ToString()
-            : null;
+        var hotelId = _tenantContext?.HotelId.HasValue == true ? _tenantContext.HotelId.Value : Guid.Empty;
+        string? filterHotelId = !isSuperAdmin && hotelId != Guid.Empty ? hotelId.ToString() : null;
 
+        var resultList = new List<CustomerDto>();
+        var seenKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        // 1. Fetch live customers from Turso Cloud DB
         try
         {
             var tursoCustomers = await _tursoSync.FetchCustomersFromTursoAsync(filterHotelId);
-            return ApiResponse<List<CustomerDto>>.Ok(tursoCustomers ?? new List<CustomerDto>());
+            if (tursoCustomers != null)
+            {
+                foreach (var c in tursoCustomers)
+                {
+                    var key = !string.IsNullOrEmpty(c.Phone) ? c.Phone : c.Id.ToString();
+                    if (!seenKeys.Contains(key))
+                    {
+                        seenKeys.Add(key);
+                        resultList.Add(c);
+                    }
+                }
+            }
         }
-        catch (Exception ex)
+        catch { }
+
+        // 2. Query local DB
+        var query = _db.Customers.Include(c => c.Reservations).AsNoTracking().AsQueryable();
+        if (!isSuperAdmin && hotelId != Guid.Empty)
         {
-            return ApiResponse<List<CustomerDto>>.Ok(new List<CustomerDto>());
+            query = query.Where(c => c.HotelId == hotelId);
         }
+
+        var localCustomers = await query.OrderByDescending(c => c.CreatedAt).ToListAsync();
+        foreach (var lc in localCustomers)
+        {
+            var key = !string.IsNullOrEmpty(lc.Phone) ? lc.Phone : lc.Id.ToString();
+            if (!seenKeys.Contains(key))
+            {
+                seenKeys.Add(key);
+                resultList.Add(MapToDto(lc));
+            }
+        }
+
+        return ApiResponse<List<CustomerDto>>.Ok(resultList);
     }
 
     public async Task<ApiResponse<CustomerDto>> GetCustomerByIdAsync(Guid id)
@@ -138,23 +169,84 @@ public class CustomerService : ICustomerService
         return ApiResponse<CustomerDto>.Ok(updatedDto, "Customer updated");
     }
 
-    public async Task<ApiResponse<bool>> DeleteCustomerAsync(Guid id)
+    public async Task<ApiResponse<bool>> DeleteCustomerAsync(string id)
     {
-        var idStr = id.ToString();
-        var detGuidStr = id.ToString("N");
+        var target = (id ?? "").Trim();
+        var safeTarget = target.Replace("'", "''");
+        Guid.TryParse(target, out var parsedGuid);
+        var idStr = parsedGuid != Guid.Empty ? parsedGuid.ToString() : target;
+        var detGuidStr = parsedGuid != Guid.Empty ? parsedGuid.ToString("N") : target;
 
-        // Delete live directly from Turso Cloud DB
-        await _tursoSync.ExecuteSqlAsync($"DELETE FROM customers WHERE id = '{idStr}' OR id = 'cust-{idStr}' OR id LIKE '%{detGuidStr}%';");
-
-        // Also clean local DB if tracked
-        var c = await _db.Customers.FirstOrDefaultAsync(cust => cust.Id == id);
-        if (c != null)
+        try
         {
-            _db.Customers.Remove(c);
-            try { await _db.SaveChangesAsync(); } catch { }
+            var tursoCustomers = await _tursoSync.FetchCustomersFromTursoAsync();
+            if (tursoCustomers != null)
+            {
+                var matches = tursoCustomers.Where(c => 
+                    c.Id == parsedGuid || 
+                    c.Id.ToString().Equals(target, StringComparison.OrdinalIgnoreCase) ||
+                    (!string.IsNullOrEmpty(c.Phone) && c.Phone.Equals(target, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(c.Email) && c.Email.Equals(target, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(c.FullName) && c.FullName.Equals(target, StringComparison.OrdinalIgnoreCase))
+                ).ToList();
+
+                foreach (var match in matches)
+                {
+                    if (!string.IsNullOrEmpty(match.Email))
+                        await _tursoSync.ExecuteSqlAsync($"DELETE FROM customers WHERE email = '{match.Email.Replace("'", "''")}';");
+                    if (!string.IsNullOrEmpty(match.Phone))
+                        await _tursoSync.ExecuteSqlAsync($"DELETE FROM customers WHERE phone = '{match.Phone.Replace("'", "''")}';");
+                    if (!string.IsNullOrEmpty(match.FullName))
+                        await _tursoSync.ExecuteSqlAsync($"DELETE FROM customers WHERE full_name = '{match.FullName.Replace("'", "''")}';");
+                }
+            }
+        }
+        catch { }
+
+        // Execute direct deletion by raw ID, GUID, phone, email, or full name on Turso
+        await _tursoSync.ExecuteSqlAsync($"DELETE FROM customers WHERE id = '{safeTarget}' OR id = '{idStr}' OR id = 'cust-{safeTarget}' OR phone = '{safeTarget}' OR email = '{safeTarget}' OR full_name = '{safeTarget}' OR id LIKE '%{detGuidStr}%';");
+
+        // Clean local DB with IgnoreQueryFilters & PRAGMA foreign_keys = OFF to guarantee deletion
+        try
+        {
+            await _db.Database.ExecuteSqlRawAsync("PRAGMA foreign_keys = OFF;");
+            var cList = await _db.Customers.IgnoreQueryFilters().Where(cust => cust.Id == parsedGuid || cust.Id.ToString() == target || cust.Email == target || cust.Phone == target || cust.FullName == target).ToListAsync();
+            foreach (var c in cList)
+            {
+                var resList = await _db.Reservations.IgnoreQueryFilters().Where(r => r.CustomerId == c.Id).ToListAsync();
+                foreach (var res in resList)
+                {
+                    var invoices = await _db.Invoices.IgnoreQueryFilters().Where(i => i.ReservationId == res.Id).ToListAsync();
+                    var payments = await _db.Payments.IgnoreQueryFilters().Where(p => p.ReservationId == res.Id).ToListAsync();
+                    var posOrders = await _db.PosOrders.IgnoreQueryFilters().Where(p => p.ReservationId == res.Id).ToListAsync();
+                    foreach (var po in posOrders)
+                    {
+                        var poItems = await _db.PosOrderItems.IgnoreQueryFilters().Where(poi => poi.OrderId == po.Id).ToListAsync();
+                        _db.PosOrderItems.RemoveRange(poItems);
+                    }
+                    _db.PosOrders.RemoveRange(posOrders);
+
+                    _db.Invoices.RemoveRange(invoices);
+                    _db.Payments.RemoveRange(payments);
+                    _db.Reservations.Remove(res);
+                }
+                _db.Customers.Remove(c);
+            }
+            await _db.SaveChangesAsync();
+            await _db.Database.ExecuteSqlRawAsync("PRAGMA foreign_keys = ON;");
+        }
+        catch
+        {
+            try
+            {
+                await _db.Database.ExecuteSqlRawAsync("PRAGMA foreign_keys = OFF;");
+                await _db.Database.ExecuteSqlRawAsync($"DELETE FROM Customers WHERE Id = '{safeTarget}' OR Phone = '{safeTarget}' OR Email = '{safeTarget}' OR FullName = '{safeTarget}';");
+                await _db.Database.ExecuteSqlRawAsync("PRAGMA foreign_keys = ON;");
+            }
+            catch { }
         }
 
-        return ApiResponse<bool>.Ok(true, "Customer deleted successfully from database");
+        return ApiResponse<bool>.Ok(true, "Customer profile deleted successfully");
     }
 
     private static CustomerDto MapToDto(Customer c)

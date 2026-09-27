@@ -38,6 +38,9 @@ export default function WhatsAppModal({
   const [copied, setCopied] = useState(false);
   const [menuCategories, setMenuCategories] = useState<PosCategory[]>([]);
 
+  const targetName = reservation?.customerName || customer?.fullName || customer?.name || 'Guest';
+  const targetPhone = reservation?.customerPhone || customer?.phone || '';
+
   useEffect(() => {
     if (defaultTemplate) {
       setTemplateType(defaultTemplate);
@@ -68,9 +71,6 @@ export default function WhatsAppModal({
   }, [reservation, customer, templateType, hotelName, hotelAddress, hotelPhone, wifiName, wifiPassword, reviewUrl, websiteUrl, menuCategories]);
 
   if (!isOpen || (!reservation && !customer)) return null;
-
-  const targetName = reservation?.customerName || customer?.fullName || customer?.name || 'Guest';
-  const targetPhone = reservation?.customerPhone || customer?.phone || '';
 
   function generateMessage(type: 'booking' | 'checkout' | 'welcome' | 'menu') {
     const name = targetName;
@@ -128,21 +128,29 @@ Your reservation is confirmed. Here are your booking details:
 
 We look forward to welcoming you for a memorable stay! 🙏`;
       } else if (type === 'checkout') {
-        const shortBillUrl = `http://localhost:3000/admin/invoices/print?id=${reservation.bookingNumber || reservation.id}`;
+        const baseAmt = reservation.baseAmount || reservation.totalAmount || 2500;
+        const foodAmt = (reservation as any).foodAmount || 0;
+        const taxAmt = reservation.taxAmount || 0;
+        const totalAmt = reservation.totalAmount || 2500;
+        const paidAmt = reservation.paidAmount || totalAmt;
+
         return `Dear *${name}*,
 
-Thank you for staying with us at *${hotelName}*! 🌟✨
+Thank you for choosing *${hotelName}*! 🏨✨
 
-Here is your official checkout receipt summary:
-🛏️ *Room:* ${reservation.roomNumber || '101'} (${reservation.roomTypeName || 'Deluxe Room'})
+Here is your Official Tax Invoice & Settlement Receipt:
+━━━━━━━━━━━━━━━━━━━━━
+📋 *TAX INVOICE & RECEIPT*
 🧾 *Booking ID:* ${reservation.bookingNumber}
+🛏️ *Room:* Room ${reservation.roomNumber || '101'} (${reservation.roomTypeName || 'Deluxe Room'})
+📅 *Check-In Date:* ${formattedIn}
 📅 *Check-Out Date:* ${formattedOut}
-💰 *Total Amount:* ₹${reservation.totalAmount?.toLocaleString('en-IN')}
-✅ *Paid Amount:* ₹${reservation.paidAmount?.toLocaleString('en-IN')} (Paid in Full)
 
-📄 *Official Tax Invoice & Receipt:*
-👇 *Click link to View & Download Bill:*
-${shortBillUrl}
+💰 *Base Room Charges:* ₹${baseAmt.toLocaleString('en-IN')}${foodAmt > 0 ? `\n🍽️ *Food & Beverage Charges:* ₹${foodAmt.toLocaleString('en-IN')}` : ''}${taxAmt > 0 ? `\n📊 *GST / Taxes:* ₹${taxAmt.toLocaleString('en-IN')}` : ''}
+💵 *Total Amount:* ₹${totalAmt.toLocaleString('en-IN')}
+✅ *Paid Amount:* ₹${paidAmt.toLocaleString('en-IN')} (Paid in Full)
+💳 *Payment Status:* PAID IN FULL (₹0 Balance)
+━━━━━━━━━━━━━━━━━━━━━
 
 ⭐ *Rate Your Experience & Google Review:*
 ${guestReviewLink}

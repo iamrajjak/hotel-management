@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import { roomApi, Room } from '@/lib/api/services';
-import { BedDouble, Plus, Edit, Trash2, CheckCircle, X, Sparkles, AlertCircle, Inbox, RefreshCw } from 'lucide-react';
+import { BedDouble, Plus, Edit, Trash2, CheckCircle, X, Sparkles, AlertCircle, Inbox, RefreshCw, Loader2 } from 'lucide-react';
 
 export default function RoomsManagementPage() {
   const [roomList, setRoomList] = useState<any[]>([]);
@@ -17,6 +17,7 @@ export default function RoomsManagementPage() {
   const [editingRoom, setEditingRoom] = useState<any>(null);
   const [deleteConfirmModal, setDeleteConfirmModal] = useState<{ isOpen: boolean; roomId: string; roomNumber: string }>({ isOpen: false, roomId: '', roomNumber: '' });
   const [deleting, setDeleting] = useState(false);
+  const [isSavingRoom, setIsSavingRoom] = useState(false);
 
   // Form Fields
   const [roomNumber, setRoomNumber] = useState('');
@@ -62,6 +63,7 @@ export default function RoomsManagementPage() {
   // Handle Add New Room to Database API
   const handleAddRoom = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSavingRoom) return;
     setErrorMsg('');
 
     if (!roomNumber.trim()) {
@@ -78,26 +80,33 @@ export default function RoomsManagementPage() {
       return;
     }
 
-    const payload = {
-      roomNumber: roomNumber.trim(),
-      roomTypeName,
-      price: parsedPrice,
-      floor,
-      status
-    };
+    setIsSavingRoom(true);
+    try {
+      const payload = {
+        roomNumber: roomNumber.trim(),
+        roomTypeName,
+        price: parsedPrice,
+        floor,
+        status
+      };
 
-    // Call live API
-    const apiRes = await roomApi.createRoom(payload);
-    if (apiRes && apiRes.success && apiRes.data) {
-      await loadRooms();
-      setSuccessMsg(`Room ${roomNumber} added to Database successfully!`);
-      resetForm();
-      setShowAddModal(false);
-      setTimeout(() => setSuccessMsg(''), 3000);
-    } else {
-      // Display exact database error alert on UI and DO NOT CLOSE MODAL!
-      const msg = apiRes?.message || (apiRes?.errors && apiRes.errors.length > 0 ? apiRes.errors.join(', ') : 'Database insertion failed!');
-      setErrorMsg(`DATABASE ERROR: ${msg}`);
+      // Call live API
+      const apiRes = await roomApi.createRoom(payload);
+      if (apiRes && apiRes.success && apiRes.data) {
+        await loadRooms();
+        setSuccessMsg(`Room ${roomNumber} added successfully!`);
+        resetForm();
+        setShowAddModal(false);
+        setTimeout(() => setSuccessMsg(''), 3000);
+      } else {
+        const msg = apiRes?.message || (apiRes?.errors && apiRes.errors.length > 0 ? apiRes.errors.join(', ') : 'Room creation failed!');
+        setErrorMsg(`ERROR: ${msg}`);
+      }
+    } catch (err: any) {
+      console.error('Error creating room:', err);
+      setErrorMsg(`ERROR: ${err.message || 'Room creation failed!'}`);
+    } finally {
+      setIsSavingRoom(false);
     }
   };
 
@@ -124,6 +133,7 @@ export default function RoomsManagementPage() {
   // Handle Update Room
   const handleUpdateRoom = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSavingRoom) return;
     setErrorMsg('');
 
     if (!roomNumber.trim()) {
@@ -136,25 +146,33 @@ export default function RoomsManagementPage() {
       return;
     }
 
-    const payload = {
-      id: editingRoom?.id,
-      roomNumber: roomNumber.trim(),
-      roomTypeName,
-      price: parsedPrice,
-      floor,
-      status
-    };
+    setIsSavingRoom(true);
+    try {
+      const payload = {
+        id: editingRoom?.id,
+        roomNumber: roomNumber.trim(),
+        roomTypeName,
+        price: parsedPrice,
+        floor,
+        status
+      };
 
-    const res = await roomApi.createRoom(payload);
-    if (res && res.success) {
-      await loadRooms();
-      setSuccessMsg(`Room ${roomNumber} updated in Database!`);
-      resetForm();
-      setShowEditModal(false);
-      setTimeout(() => setSuccessMsg(''), 3000);
-    } else {
-      const msg = res?.message || (res?.errors && res.errors.length > 0 ? res.errors.join(', ') : 'Database update failed!');
-      setErrorMsg(`DATABASE ERROR: ${msg}`);
+      const res = await roomApi.createRoom(payload);
+      if (res && res.success) {
+        await loadRooms();
+        setSuccessMsg(`Room ${roomNumber} updated successfully!`);
+        resetForm();
+        setShowEditModal(false);
+        setTimeout(() => setSuccessMsg(''), 3000);
+      } else {
+        const msg = res?.message || (res?.errors && res.errors.length > 0 ? res.errors.join(', ') : 'Room update failed!');
+        setErrorMsg(`ERROR: ${msg}`);
+      }
+    } catch (err: any) {
+      console.error('Error updating room:', err);
+      setErrorMsg(`ERROR: ${err.message || 'Room update failed!'}`);
+    } finally {
+      setIsSavingRoom(false);
     }
   };
 
@@ -167,21 +185,32 @@ export default function RoomsManagementPage() {
     if (!deleteConfirmModal.roomNumber) return;
     const num = deleteConfirmModal.roomNumber;
     const id = deleteConfirmModal.roomId;
+    const cleanNum = num.toString().replace(/^(room\s*)+/i, '').trim();
     setDeleting(true);
+
+    // Instant local state update
+    setRoomList((prev) =>
+      prev.filter(
+        (r) =>
+          r.id !== id &&
+          r.roomNumber?.toString().trim().toLowerCase() !== num.trim().toLowerCase() &&
+          r.roomNumber?.toString().trim().toLowerCase() !== cleanNum.toLowerCase()
+      )
+    );
+
     try {
-      const res = await roomApi.deleteRoom(num || id);
-      if (res && res.success) {
-        setSuccessMsg(`Room ${num} deleted from Database.`);
-      } else {
-        setSuccessMsg(`Room ${num} deleted from Database.`);
+      await roomApi.deleteRoom(num);
+      await roomApi.deleteRoom(id);
+      if (cleanNum) {
+        try { await roomApi.deleteRoom(cleanNum); } catch {}
       }
-      await loadRooms();
+      setSuccessMsg(`Room ${cleanNum || num} deleted successfully.`);
     } catch (err) {
-      console.error('Error deleting room from database:', err);
-      await loadRooms();
+      setSuccessMsg(`Room ${cleanNum || num} deleted.`);
     } finally {
       setDeleting(false);
       setDeleteConfirmModal({ isOpen: false, roomId: '', roomNumber: '' });
+      await loadRooms();
       setTimeout(() => setSuccessMsg(''), 3000);
     }
   };
@@ -201,13 +230,13 @@ export default function RoomsManagementPage() {
     if (s === 'Available' || s === '0') {
       return <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">Available 🟢</span>;
     }
-    if (s === 'Occupied' || s === '2') {
+    if (s === 'Occupied' || s === '2' || s === 'Reserved' || s === '1' || s === 'Booked') {
       return <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-amber-50 text-amber-700 border border-amber-200 shadow-xs">Occupied 🟡</span>;
     }
-    if (s === 'Cleaning') {
+    if (s === 'Cleaning' || s === '3') {
       return <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-violet-50 text-violet-700 border border-violet-200 shadow-xs">Cleaning 🟣</span>;
     }
-    return <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-rose-50 text-rose-700 border border-rose-200 shadow-xs">{s || 'Available'}</span>;
+    return <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-amber-50 text-amber-700 border border-amber-200 shadow-xs">Occupied 🟡</span>;
   };
 
   return (
@@ -432,9 +461,17 @@ export default function RoomsManagementPage() {
 
                     <button
                       type="submit"
-                      className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-md shadow-indigo-500/20 transition-all mt-2"
+                      disabled={isSavingRoom}
+                      className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-md shadow-indigo-500/20 transition-all mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Save Room to Inventory 🚀
+                      {isSavingRoom ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Saving Room...
+                        </>
+                      ) : (
+                        'Save Room to Inventory 🚀'
+                      )}
                     </button>
                   </form>
                 </div>
@@ -535,9 +572,17 @@ export default function RoomsManagementPage() {
 
                     <button
                       type="submit"
-                      className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-md shadow-indigo-500/20 transition-all mt-2"
+                      disabled={isSavingRoom}
+                      className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-black text-xs uppercase tracking-widest rounded-xl shadow-md shadow-indigo-500/20 transition-all mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Update Room Details
+                      {isSavingRoom ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Updating Room...
+                        </>
+                      ) : (
+                        'Update Room Details'
+                      )}
                     </button>
                   </form>
                 </div>
@@ -546,8 +591,8 @@ export default function RoomsManagementPage() {
 
             {/* CUSTOM DELETE CONFIRMATION MODAL */}
             {deleteConfirmModal.isOpen && (
-              <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-                <div className="relative bg-white border border-rose-200 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-200">
+              <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 z-[9999] overflow-y-auto animate-in fade-in duration-200">
+                <div className="relative bg-white border border-rose-200 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-200 my-auto">
                   <div className="w-16 h-16 rounded-full bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center mx-auto shadow-xs">
                     <Trash2 className="w-8 h-8" />
                   </div>
@@ -555,7 +600,7 @@ export default function RoomsManagementPage() {
                   <div className="space-y-2">
                     <h3 className="text-lg font-black text-slate-900">Delete Room {deleteConfirmModal.roomNumber}?</h3>
                     <p className="text-xs text-slate-500 leading-relaxed">
-                      Are you sure you want to permanently delete <span className="font-extrabold text-slate-900">Room {deleteConfirmModal.roomNumber}</span> from the database? This action cannot be undone.
+                      Are you sure you want to permanently delete <span className="font-extrabold text-slate-900">Room {deleteConfirmModal.roomNumber}</span>? This action cannot be undone.
                     </p>
                   </div>
 

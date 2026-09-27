@@ -36,6 +36,7 @@ export default function HotelSettingsPage() {
   const [msg, setMsg] = useState('');
   const [msgType, setMsgType] = useState<'success' | 'error'>('success');
   const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Editable Form States
   const [hotelName, setHotelName] = useState('');
@@ -165,7 +166,7 @@ export default function HotelSettingsPage() {
       });
 
       if (res.success) {
-        showNotice('Settings updated successfully in Database & Turso Cloud!');
+        showNotice('Settings updated successfully!');
         if (res.data) setHotel(res.data);
 
         // Update local storage so Header & Sidebar reflect changes live
@@ -261,10 +262,10 @@ export default function HotelSettingsPage() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
-      <Sidebar />
+      <Sidebar isOpenMobile={isMobileOpen} onCloseMobile={() => setIsMobileOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header title="Hotel Settings & Configuration" />
+        <Header title="Hotel Settings & Configuration" onMenuClick={() => setIsMobileOpen(true)} />
 
         <main className="p-4 sm:p-8 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
           {/* Executive Top Banner */}
@@ -365,7 +366,7 @@ export default function HotelSettingsPage() {
                       <h3 className="font-extrabold text-base text-white">
                         {settingCards.find(c => c.id === activeModal)?.title}
                       </h3>
-                      <p className="text-slate-400 text-xs font-medium">Update hotel configuration and database records</p>
+                      <p className="text-slate-400 text-xs font-medium">Update hotel configuration and system preferences</p>
                     </div>
                   </div>
                   <button

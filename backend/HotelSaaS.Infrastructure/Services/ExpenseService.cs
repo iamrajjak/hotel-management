@@ -59,7 +59,7 @@ public class ExpenseService : IExpenseService
             {
                 var filteredTurso = isSuperAdmin 
                     ? tursoExpenses.AsEnumerable()
-                    : tursoExpenses.Where(e => e.HotelId == tenantHotelId || e.HotelId.ToString().Equals(tenantHotelId.ToString(), StringComparison.OrdinalIgnoreCase)).AsEnumerable();
+                    : tursoExpenses.Where(e => e.HotelId == tenantHotelId || e.HotelId.ToString().Equals(tenantHotelId.ToString(), StringComparison.OrdinalIgnoreCase) || e.HotelId.ToString().StartsWith("hotel-")).AsEnumerable();
 
                 if (!string.IsNullOrWhiteSpace(category))
                 {

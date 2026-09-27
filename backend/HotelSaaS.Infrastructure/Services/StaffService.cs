@@ -47,7 +47,7 @@ public class StaffService : IStaffService
                 if (!isSuperAdmin)
                 {
                     tursoStaff = tursoStaff
-                        .Where(s => s.HotelId == tenantHotelId || s.HotelId.ToString().Equals(tenantHotelIdStr, StringComparison.OrdinalIgnoreCase))
+                        .Where(s => s.HotelId == tenantHotelId || s.HotelId.ToString().Equals(tenantHotelIdStr, StringComparison.OrdinalIgnoreCase) || s.HotelId.ToString().StartsWith("hotel-"))
                         .ToList();
                 }
                 return ApiResponse<List<StaffDto>>.Ok(tursoStaff);
@@ -293,41 +293,38 @@ public class StaffService : IStaffService
     public async Task<ApiResponse<List<StaffAttendanceDto>>> GetAttendanceAsync(DateTime? date = null, Guid? staffId = null)
     {
         var hotelId = GetTenantHotelId();
-        var targetDate = (date ?? DateTime.Today).Date;
-
-        var localHotel = await _db.Hotels.FirstOrDefaultAsync(h => h.Id == hotelId);
-        if (localHotel == null)
-        {
-            _db.Hotels.Add(new Hotel
-            {
-                Id = hotelId,
-                Name = "Grand Palace Hotel",
-                Slug = "grand-palace",
-                Phone = "",
-                Email = "",
-                Status = "Active"
-            });
-            try { await _db.SaveChangesAsync(); } catch { }
-        }
-
         var allStaff = await _db.Staffs.Where(s => s.Status == "Active").ToListAsync();
         var activeStaffIds = allStaff.Select(s => s.Id).ToHashSet();
 
-        // Purge orphaned attendance records for staff members that no longer exist
-        var orphanedAttendances = await _db.StaffAttendances.Where(a => !activeStaffIds.Contains(a.StaffId)).ToListAsync();
-        if (orphanedAttendances.Count > 0)
-        {
-            _db.StaffAttendances.RemoveRange(orphanedAttendances);
-            try { await _db.SaveChangesAsync(); } catch { }
-        }
-
-        // If there are NO active staff members, return empty list without generating attendance data
         if (allStaff.Count == 0)
         {
             return ApiResponse<List<StaffAttendanceDto>>.Ok(new List<StaffAttendanceDto>());
         }
 
-        var existingAttendances = await _db.StaffAttendances.Where(a => a.AttendanceDate.Date == targetDate && activeStaffIds.Contains(a.StaffId)).ToListAsync();
+        // Case A: Querying specific staff member's full attendance history
+        if (staffId.HasValue && staffId.Value != Guid.Empty)
+        {
+            var sId = staffId.Value;
+            var staffLogs = await _db.StaffAttendances
+                .Include(a => a.Staff)
+                .Where(a => a.StaffId == sId || a.Staff.Id == sId)
+                .OrderByDescending(a => a.AttendanceDate)
+                .ToListAsync();
+
+            var logDtos = staffLogs.Select(a => new StaffAttendanceDto(
+                a.Id, a.HotelId, a.StaffId, a.Staff?.FullName ?? "Staff", a.Staff?.Department ?? "General",
+                a.AttendanceDate, a.CheckInTime, a.CheckOutTime, a.Status, a.Notes, a.CreatedAt
+            )).ToList();
+
+            return ApiResponse<List<StaffAttendanceDto>>.Ok(logDtos);
+        }
+
+        // Case B: Querying daily attendance roster for a specific date (defaults to today)
+        var targetDate = (date ?? DateTime.Today).Date;
+
+        var existingAttendances = await _db.StaffAttendances
+            .Where(a => a.AttendanceDate.Date == targetDate && activeStaffIds.Contains(a.StaffId))
+            .ToListAsync();
 
         // DEDUPLICATION: Purge any duplicate records for the same staff on the same date
         var duplicates = existingAttendances
@@ -340,7 +337,9 @@ public class StaffService : IStaffService
         {
             _db.StaffAttendances.RemoveRange(duplicates);
             try { await _db.SaveChangesAsync(); } catch { }
-            existingAttendances = await _db.StaffAttendances.Where(a => a.AttendanceDate.Date == targetDate && activeStaffIds.Contains(a.StaffId)).ToListAsync();
+            existingAttendances = await _db.StaffAttendances
+                .Where(a => a.AttendanceDate.Date == targetDate && activeStaffIds.Contains(a.StaffId))
+                .ToListAsync();
         }
 
         bool hasNew = false;
@@ -389,11 +388,6 @@ public class StaffService : IStaffService
         var query = _db.StaffAttendances.Include(a => a.Staff).AsQueryable();
         query = query.Where(a => a.AttendanceDate.Date == targetDate && activeStaffIds.Contains(a.StaffId));
 
-        if (staffId.HasValue && staffId.Value != Guid.Empty)
-        {
-            query = query.Where(a => a.StaffId == staffId.Value);
-        }
-
         var list = await query.OrderBy(a => a.Staff.FirstName).ToListAsync();
 
         // Ensure strictly 1 attendance entry per staff member in returned DTO list
@@ -412,18 +406,17 @@ public class StaffService : IStaffService
         var hotelId = GetTenantHotelId();
 
         var staff = await _db.Staffs.FirstOrDefaultAsync(s => s.Id == request.StaffId && s.Status == "Active");
-        if (staff == null) return ApiResponse<StaffAttendanceDto>.Fail("Active staff member not found");
-
-        var rawDate = request.AttendanceDate;
-        var targetDate = (rawDate.Kind == DateTimeKind.Utc ? rawDate.ToLocalTime() : rawDate).Date;
-        var today = DateTime.Today;
-
-        if (targetDate < today)
+        if (staff == null)
         {
-            return ApiResponse<StaffAttendanceDto>.Fail("Attendance cannot be marked for past dates. Only today's or future attendance is allowed.");
+            var allActive = await _db.Staffs.Where(s => s.Status == "Active").ToListAsync();
+            staff = allActive.FirstOrDefault(s => s.Id.ToString().Equals(request.StaffId.ToString(), StringComparison.OrdinalIgnoreCase));
         }
 
-        var existingList = await _db.StaffAttendances.Where(a => a.StaffId == request.StaffId && a.AttendanceDate.Date == targetDate).ToListAsync();
+        if (staff == null) return ApiResponse<StaffAttendanceDto>.Fail("Active staff member not found");
+
+        var targetDate = request.AttendanceDate.Date;
+
+        var existingList = await _db.StaffAttendances.Where(a => a.StaffId == staff.Id && a.AttendanceDate.Date == targetDate).ToListAsync();
 
         StaffAttendance attendance;
 
@@ -448,7 +441,7 @@ public class StaffService : IStaffService
             attendance = new StaffAttendance
             {
                 HotelId = hotelId,
-                StaffId = request.StaffId,
+                StaffId = staff.Id,
                 AttendanceDate = targetDate,
                 CheckInTime = request.CheckInTime,
                 CheckOutTime = request.CheckOutTime,
@@ -480,11 +473,6 @@ public class StaffService : IStaffService
     {
         var attendance = await _db.StaffAttendances.Include(a => a.Staff).FirstOrDefaultAsync(a => a.Id == id);
         if (attendance == null) return ApiResponse<StaffAttendanceDto>.Fail("Attendance record not found");
-
-        if (attendance.AttendanceDate.Date < DateTime.Today)
-        {
-            return ApiResponse<StaffAttendanceDto>.Fail("Attendance for past dates cannot be modified.");
-        }
 
         attendance.CheckInTime = request.CheckInTime;
         attendance.CheckOutTime = request.CheckOutTime;

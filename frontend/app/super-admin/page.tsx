@@ -13,6 +13,7 @@ export default function SuperAdminPage() {
   const [msg, setMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // New Hotel Registration Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -131,14 +132,14 @@ export default function SuperAdminPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`⚠️ PERMANENT DELETE: Are you sure you want to delete hotel '${name}' from Database?`)) return;
+    if (!confirm(`⚠️ PERMANENT DELETE: Are you sure you want to delete hotel '${name}'?`)) return;
     setProcessingId(id);
     setMsg('');
     setErrorMsg('');
     try {
       const res = await hotelApi.deleteHotel(id);
       if (res.success) {
-        setMsg(`🗑️ Hotel '${name}' deleted permanently from Database.`);
+        setMsg(`🗑️ Hotel '${name}' deleted permanently.`);
         await loadData();
       } else {
         setErrorMsg(res.message || 'Delete failed');
@@ -208,10 +209,19 @@ export default function SuperAdminPage() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-800 font-sans">
-      <Sidebar userRole="SuperAdmin" />
+      <Sidebar 
+        userRole="SuperAdmin" 
+        isOpenMobile={isMobileOpen}
+        onCloseMobile={() => setIsMobileOpen(false)}
+      />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header title="Super Admin Platform Console" userRole="SuperAdmin" userName="SaaS Administrator" />
+        <Header 
+          title="Super Admin Platform Console" 
+          userRole="SuperAdmin" 
+          userName="SaaS Administrator" 
+          onMenuClick={() => setIsMobileOpen(true)}
+        />
 
         <main className="p-4 sm:p-8 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
           {/* Header Banner */}
@@ -223,7 +233,7 @@ export default function SuperAdminPage() {
               </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">SaaS Tenant Fleet Overview</h1>
               <p className="text-indigo-200 text-xs sm:text-sm mt-1 max-w-xl">
-                Approve new hotel registrations, onboard new tenant hotels, and enforce multi-tenant database isolation.
+                Approve new hotel registrations, onboard new tenant hotels, and enforce multi-tenant isolation.
               </p>
             </div>
 
@@ -272,7 +282,7 @@ export default function SuperAdminPage() {
                 </div>
               </div>
               <h3 className="text-3xl font-extrabold text-slate-900 mt-3">{activeHotels.length}</h3>
-              <p className="text-xs text-emerald-600 mt-1 font-bold">Shared Database Isolation Active</p>
+              <p className="text-xs text-emerald-600 mt-1 font-bold">Shared Tenant Isolation Active</p>
             </div>
 
             <div className="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">

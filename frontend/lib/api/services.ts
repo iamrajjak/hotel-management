@@ -196,6 +196,7 @@ export interface PosOrder {
   roomId?: string;
   roomNumber?: string;
   guestName?: string;
+  guestPhone?: string;
   tableNumber?: string;
   orderType: string;
   subtotal: number;
@@ -309,6 +310,7 @@ export const reservationApi = {
   getReservations: () => apiClient<Reservation[]>('/reservations'),
   getReservationById: (id: string) => apiClient<Reservation>(`/reservations/${id}`),
   createReservation: (data: any) => apiClient<Reservation>('/reservations', { method: 'POST', body: JSON.stringify(data) }),
+  updateReservation: (id: string, data: any) => apiClient<Reservation>(`/reservations/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   createPublicReservation: (data: any) => apiClient<Reservation>('/reservations/public', { method: 'POST', body: JSON.stringify(data) }),
   checkIn: (id: string) => apiClient<Reservation>(`/reservations/${id}/check-in`, { method: 'POST' }),
   checkOut: (id: string) => apiClient<Reservation>(`/reservations/${id}/check-out`, { method: 'POST' }),

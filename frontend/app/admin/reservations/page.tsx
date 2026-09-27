@@ -6,7 +6,7 @@ import Header from '@/components/Header';
 import GuestFolioModal from '@/components/GuestFolioModal';
 import WhatsAppModal from '@/components/WhatsAppModal';
 import { reservationApi, roomApi, customerApi, hotelApi, Reservation, Room, Customer, Hotel } from '@/lib/api/services';
-import { CalendarDays, Search, Filter, Plus, Edit, Trash2, CheckCircle, X, Sparkles, AlertCircle, Inbox, Users, CreditCard, IndianRupee, ShieldCheck, Printer, MessageCircle } from 'lucide-react';
+import { CalendarDays, Search, Filter, Plus, Edit, Trash2, CheckCircle, X, Sparkles, AlertCircle, Inbox, Users, CreditCard, IndianRupee, ShieldCheck, Printer, MessageCircle, Loader2 } from 'lucide-react';
 
 export default function ReservationsManagementPage() {
   const [bookingList, setBookingList] = useState<any[]>([]);
@@ -19,6 +19,8 @@ export default function ReservationsManagementPage() {
 
   // Modal States
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingReservation, setEditingReservation] = useState<any>(null);
   const [showFolioModal, setShowFolioModal] = useState(false);
   const [selectedFolioReservation, setSelectedFolioReservation] = useState<any>(null);
 
@@ -168,35 +170,44 @@ export default function ReservationsManagementPage() {
     }
   };
 
-  // Handle Add New Booking to Live Database API with Payment Fields
+  const [isSavingBooking, setIsSavingBooking] = useState(false);
+
+  // Handle Add New Booking API with Payment Fields & Submit Guard
   const handleAddBooking = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSavingBooking) return;
     setErrorMsg('');
+    setIsSavingBooking(true);
 
     const trimmedName = guestName.trim();
     if (!trimmedName || trimmedName.length < 2) {
       setErrorMsg('Guest full name is required (minimum 2 characters)');
+      setIsSavingBooking(false);
       return;
     }
 
     const cleanPhone = guestPhone.replace(/\D/g, '');
     if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
       setErrorMsg('Please enter a valid 10-digit Indian mobile number (e.g. 9876543210)');
+      setIsSavingBooking(false);
       return;
     }
 
     if (guestEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail.trim())) {
       setErrorMsg('Please enter a valid email address (e.g. guest@example.com)');
+      setIsSavingBooking(false);
       return;
     }
 
     if (!roomNumber) {
-      setErrorMsg('No available rooms in database to book! Please select or add a room in Rooms Management.');
+      setErrorMsg('No available rooms to book! Please select or add a room in Rooms Management.');
+      setIsSavingBooking(false);
       return;
     }
 
     if (checkOutDate <= checkInDate) {
       setErrorMsg('Check-out date must be at least 1 day after Check-in date.');
+      setIsSavingBooking(false);
       return;
     }
 
@@ -208,11 +219,13 @@ export default function ReservationsManagementPage() {
 
     if (paidVal < 0) {
       setErrorMsg('Paid amount cannot be negative');
+      setIsSavingBooking(false);
       return;
     }
 
     if (paidVal > baseRoomPrice) {
       setErrorMsg(`Advance paid amount (₹${paidVal}) cannot exceed Total Stay Bill (₹${baseRoomPrice})`);
+      setIsSavingBooking(false);
       return;
     }
 
@@ -232,17 +245,110 @@ export default function ReservationsManagementPage() {
       bookingSource: 'Direct Walk-In'
     };
 
-    const apiRes = await reservationApi.createReservation(payload);
+    try {
+      const apiRes = await reservationApi.createReservation(payload);
 
-    if (apiRes && apiRes.success && apiRes.data) {
-      await loadData();
-      setSuccessMsg(`Reservation ${apiRes.data.bookingNumber || ''} created & saved in Database successfully!`);
-      resetForm();
-      setShowAddModal(false);
-      setTimeout(() => setSuccessMsg(''), 3000);
-    } else {
-      const msg = apiRes?.message || (apiRes?.errors && apiRes.errors.length > 0 ? apiRes.errors.join(', ') : 'Database booking insertion failed!');
-      setErrorMsg(`DATABASE ERROR: ${msg}`);
+      if (apiRes && apiRes.success && apiRes.data) {
+        await loadData();
+        setSuccessMsg(`Reservation ${apiRes.data.bookingNumber || ''} created successfully!`);
+        resetForm();
+        setShowAddModal(false);
+        setTimeout(() => setSuccessMsg(''), 4000);
+      } else {
+        const msg = apiRes?.message || (apiRes?.errors && apiRes.errors.length > 0 ? apiRes.errors.join(', ') : 'Booking creation failed!');
+        setErrorMsg(msg);
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Booking creation failed due to network error');
+    } finally {
+      setIsSavingBooking(false);
+    }
+  };
+
+  // Open Edit Booking Modal
+  const openEditModal = (r: any) => {
+    setEditingReservation(r);
+    setGuestName(r.customerName || r.guestName || '');
+    setGuestPhone(r.phone || r.customerPhone || '');
+    setGuestEmail(r.customerEmail || '');
+    setRoomNumber(r.roomNumber || r.roomId || '');
+    if (r.checkInDate) {
+      try {
+        const d = new Date(r.checkInDate);
+        if (!isNaN(d.getTime())) {
+          setCheckInDate(d.toISOString().split('T')[0]);
+        }
+      } catch {}
+    }
+    if (r.checkOutDate) {
+      try {
+        const d = new Date(r.checkOutDate);
+        if (!isNaN(d.getTime())) {
+          setCheckOutDate(d.toISOString().split('T')[0]);
+        }
+      } catch {}
+    }
+    setAdultsCount(r.adults || 1);
+    setChildrenCount(r.children || 0);
+    setAdvancePaidAmount((r.paidAmount || 0).toString());
+    setBookingStatus(r.bookingStatus || 'Confirmed');
+    setErrorMsg('');
+    setShowEditModal(true);
+  };
+
+  // Handle Update Booking
+  const handleUpdateBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSavingBooking || !editingReservation) return;
+    setErrorMsg('');
+    setIsSavingBooking(true);
+
+    const targetId = editingReservation.bookingNumber || editingReservation.id;
+    const trimmedName = guestName.trim();
+    if (!trimmedName || trimmedName.length < 2) {
+      setErrorMsg('Guest full name is required');
+      setIsSavingBooking(false);
+      return;
+    }
+
+    const cleanPhone = guestPhone.replace(/\D/g, '');
+    const nights = getNightsCount(checkInDate, checkOutDate);
+    const selectedRoomObj = availableRooms.find((rm: any) => rm.roomNumber === roomNumber);
+    const baseRoomPrice = selectedRoomObj ? (selectedRoomObj.price || 0) * (nights || 1) : (editingReservation.totalAmount || 2500);
+    const paidVal = parseFloat(advancePaidAmount) || 0;
+
+    const payload = {
+      customerName: trimmedName,
+      customerPhone: cleanPhone,
+      customerEmail: guestEmail.trim(),
+      roomNumber,
+      checkInDate,
+      checkOutDate,
+      adults: adultsCount,
+      children: childrenCount,
+      bookingStatus,
+      baseAmount: baseRoomPrice,
+      paidAmount: paidVal,
+      paymentMethod,
+      bookingSource: editingReservation.bookingSource || 'Direct Walk-In'
+    };
+
+    try {
+      const apiRes = await reservationApi.updateReservation(targetId, payload);
+      if (apiRes && apiRes.success) {
+        await loadData();
+        setSuccessMsg(`Reservation ${targetId} updated successfully!`);
+        resetForm();
+        setShowEditModal(false);
+        setEditingReservation(null);
+        setTimeout(() => setSuccessMsg(''), 4000);
+      } else {
+        setErrorMsg(apiRes?.message || 'Failed to update reservation');
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Failed to update reservation');
+    } finally {
+      setIsSavingBooking(false);
     }
   };
 
@@ -262,17 +368,34 @@ export default function ReservationsManagementPage() {
   const confirmDeleteReservation = async () => {
     if (!reservationToDelete) return;
     setDeleting(true);
-    const targetId = reservationToDelete.bookingNumber || reservationToDelete.id || 'BK-1001';
-    const res = await reservationApi.deleteReservation(targetId);
-    if (res && res.success) {
-      setSuccessMsg(`Reservation ${targetId} permanently deleted from Turso Cloud Database.`);
-    } else {
+    const targetId = reservationToDelete.bookingNumber || reservationToDelete.id;
+    const targetGuid = reservationToDelete.id;
+
+    // Instant local state filter out
+    setBookingList((prev) =>
+      prev.filter(
+        (b) =>
+          b.id !== targetGuid &&
+          b.id !== targetId &&
+          b.bookingNumber !== targetId &&
+          b.bookingNumber !== reservationToDelete.bookingNumber
+      )
+    );
+
+    try {
+      await reservationApi.deleteReservation(targetId);
+      if (targetGuid && targetGuid !== targetId) {
+        try { await reservationApi.deleteReservation(targetGuid); } catch {}
+      }
+      setSuccessMsg(`Reservation ${targetId} permanently deleted.`);
+    } catch (err) {
       setSuccessMsg(`Reservation ${targetId} deleted.`);
+    } finally {
+      setDeleting(false);
+      setReservationToDelete(null);
+      await loadData();
+      setTimeout(() => setSuccessMsg(''), 3000);
     }
-    await loadData();
-    setDeleting(false);
-    setReservationToDelete(null);
-    setTimeout(() => setSuccessMsg(''), 3000);
   };
 
   const handleCheckInChange = (newInDate: string) => {
@@ -367,7 +490,7 @@ export default function ReservationsManagementPage() {
                 Booking Master Console
               </span>
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Bookings Console</h1>
-              <p className="text-indigo-200/90 text-xs font-medium">Filter, search, and manage guest online & walk-in reservations in Database</p>
+              <p className="text-indigo-200/90 text-xs font-medium">Filter, search, and manage guest online & walk-in reservations</p>
             </div>
 
             <button
@@ -395,12 +518,12 @@ export default function ReservationsManagementPage() {
           <div className="bg-white border border-slate-200/80 rounded-3xl p-4 sm:p-6 shadow-xs space-y-4">
             {loading ? (
               <div className="text-center py-12 text-slate-500 text-xs font-bold animate-pulse">
-                Syncing bookings from Database...
+                Syncing reservations...
               </div>
             ) : bookingList.length === 0 ? (
               <div className="text-center py-12 space-y-2">
                 <p className="text-slate-700 font-bold text-sm">No reservations found</p>
-                <p className="text-xs text-slate-500">Create a new booking to see live database records here.</p>
+                <p className="text-xs text-slate-500">Create a new booking to see live records here.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -471,6 +594,13 @@ export default function ReservationsManagementPage() {
                           <td className="py-4 px-4 text-right">
                             <div className="flex items-center justify-end gap-1.5">
                               <button
+                                onClick={() => openEditModal(r)}
+                                title="Edit Reservation"
+                                className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition-colors"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                              <button
                                 onClick={() => {
                                   setSelectedWhatsAppReservation(r);
                                   setWhatsAppTemplate(r.bookingStatus === 'CheckedOut' ? 'checkout' : 'booking');
@@ -487,7 +617,7 @@ export default function ReservationsManagementPage() {
                                   setShowFolioModal(true);
                                 }}
                                 title="Print Guest Folio & Invoice"
-                                className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition-colors"
+                                className="p-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition-colors"
                               >
                                 <Printer className="w-4 h-4" />
                               </button>
@@ -537,8 +667,8 @@ export default function ReservationsManagementPage() {
                   {/* Select Existing Customer from Database CRM */}
                   <div>
                     <label className="block text-slate-700 font-bold mb-1 flex items-center justify-between">
-                      <span>Select Guest from Database CRM</span>
-                      <span className="text-[10px] text-indigo-600 font-extrabold uppercase">Live DB CRM</span>
+                      <span>Select Guest from Directory</span>
+                      <span className="text-[10px] text-indigo-600 font-extrabold uppercase">Guest Directory</span>
                     </label>
                     <select
                       value={selectedCustomerId}
@@ -559,7 +689,7 @@ export default function ReservationsManagementPage() {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Vikram Sharma"
+                      placeholder="e.g. Rajjak Khan"
                       value={guestName}
                       onChange={(e) => setGuestName(e.target.value)}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-bold focus:outline-none focus:border-indigo-600 focus:bg-white transition-all"
@@ -573,7 +703,7 @@ export default function ReservationsManagementPage() {
                         type="text"
                         required
                         maxLength={10}
-                        placeholder="9876543210"
+                        placeholder="9784306040"
                         value={guestPhone}
                         onChange={(e) => setGuestPhone(e.target.value)}
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-mono font-bold focus:outline-none focus:border-indigo-600 focus:bg-white transition-all"
@@ -583,7 +713,7 @@ export default function ReservationsManagementPage() {
                       <label className="block text-slate-700 font-bold mb-1">Email Address</label>
                       <input
                         type="email"
-                        placeholder="guest@example.com"
+                        placeholder="rajjak5453@gmail.com"
                         value={guestEmail}
                         onChange={(e) => setGuestEmail(e.target.value)}
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-semibold focus:outline-none focus:border-indigo-600 focus:bg-white transition-all"
@@ -596,7 +726,7 @@ export default function ReservationsManagementPage() {
                     {availableRooms.length === 0 ? (
                       <div className="p-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold rounded-xl flex items-center gap-2">
                         <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-                        No available rooms in database! Please add a room in Rooms Management or check-out an occupied room.
+                        No available rooms! Please add a room in Rooms Management or check-out an occupied room.
                       </div>
                     ) : (
                       <select
@@ -761,9 +891,159 @@ export default function ReservationsManagementPage() {
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-extrabold text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/25 transition-all mt-2"
+                    disabled={isSavingBooking}
+                    className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-extrabold text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/25 transition-all mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Confirm & Save to DB
+                    {isSavingBooking ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Saving Booking...</span>
+                      </>
+                    ) : (
+                      <span>Confirm & Create Booking</span>
+                    )}
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* EDIT RESERVATION MODAL */}
+          {showEditModal && editingReservation && (
+            <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 sm:p-6 z-50 overflow-y-auto">
+              <div className="relative bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl max-h-[90vh] flex flex-col my-auto space-y-4 animate-in zoom-in-95 duration-200">
+                <div className="sticky top-0 bg-white z-10 pb-3 border-b border-slate-100 flex justify-between items-center shrink-0">
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+                    <Edit className="w-5 h-5 text-indigo-600" /> Edit Reservation {editingReservation.bookingNumber || editingReservation.id}
+                  </h3>
+                  <button 
+                    onClick={() => {
+                      setShowEditModal(false);
+                      setEditingReservation(null);
+                    }} 
+                    type="button"
+                    title="Close Modal"
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-all border border-slate-200 shadow-xs flex items-center justify-center"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {errorMsg && (
+                  <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold rounded-xl flex items-center gap-2 shrink-0">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" /> {errorMsg}
+                  </div>
+                )}
+
+                <form onSubmit={handleUpdateBooking} className="overflow-y-auto space-y-4 text-xs pr-1">
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Guest Full Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={guestName}
+                      onChange={(e) => setGuestName(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-bold focus:outline-none focus:border-indigo-600 focus:bg-white transition-all"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-700 font-bold mb-1">Phone Number *</label>
+                      <input
+                        type="text"
+                        required
+                        maxLength={10}
+                        value={guestPhone}
+                        onChange={(e) => setGuestPhone(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-mono font-bold focus:outline-none focus:border-indigo-600 focus:bg-white transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 font-bold mb-1">Email Address</label>
+                      <input
+                        type="email"
+                        value={guestEmail}
+                        onChange={(e) => setGuestEmail(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-semibold focus:outline-none focus:border-indigo-600 focus:bg-white transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Assigned Room Number *</label>
+                    <input
+                      type="text"
+                      required
+                      value={roomNumber}
+                      onChange={(e) => setRoomNumber(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-bold focus:outline-none focus:border-indigo-600 focus:bg-white transition-all"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-700 font-bold mb-1">Check-in Date *</label>
+                      <input
+                        type="date"
+                        required
+                        value={checkInDate}
+                        onChange={(e) => handleCheckInChange(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-mono font-bold focus:outline-none focus:border-indigo-600 transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 font-bold mb-1">Check-out Date *</label>
+                      <input
+                        type="date"
+                        required
+                        value={checkOutDate}
+                        onChange={(e) => setCheckOutDate(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-mono font-bold focus:outline-none focus:border-indigo-600 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-slate-700 font-bold mb-1">Paid Amount (₹)</label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={advancePaidAmount}
+                        onChange={(e) => setAdvancePaidAmount(e.target.value.replace(/[^0-9.]/g, ''))}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-emerald-700 font-mono font-bold focus:outline-none focus:border-indigo-600 transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 font-bold mb-1">Booking Status *</label>
+                      <select
+                        value={bookingStatus}
+                        onChange={(e) => setBookingStatus(e.target.value)}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 font-bold focus:outline-none focus:border-indigo-600 focus:bg-white transition-all"
+                      >
+                        <option value="Confirmed">Confirmed 🟢</option>
+                        <option value="CheckedIn">CheckedIn 🔵</option>
+                        <option value="CheckedOut">CheckedOut ⚪</option>
+                        <option value="Cancelled">Cancelled 🔴</option>
+                        <option value="NoShow">NoShow 🟠</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSavingBooking}
+                    className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-700 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-extrabold text-xs uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/25 transition-all mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSavingBooking ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Updating Reservation...</span>
+                      </>
+                    ) : (
+                      <span>Update Reservation Details</span>
+                    )}
                   </button>
                 </form>
               </div>
@@ -804,8 +1084,8 @@ export default function ReservationsManagementPage() {
 
           {/* GLASSMORPHIC DELETE RESERVATION CONFIRMATION MODAL */}
           {reservationToDelete && (
-            <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-md flex items-center justify-center p-4">
-              <div className="bg-white border border-rose-100 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5 animate-in zoom-in-95 duration-200 text-center relative overflow-hidden">
+            <div className="fixed inset-0 z-[9999] bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+              <div className="bg-white border border-rose-100 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5 animate-in zoom-in-95 duration-200 text-center relative overflow-hidden my-auto">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
 
                 <div className="w-16 h-16 rounded-3xl bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center mx-auto shadow-inner">
@@ -846,7 +1126,7 @@ export default function ReservationsManagementPage() {
                 </div>
 
                 <p className="text-[11px] text-rose-600 font-bold bg-rose-50 p-3 rounded-xl border border-rose-200/80">
-                  ⚠️ This booking will be permanently deleted from your local database and live Turso Cloud database.
+                  ⚠️ This booking will be permanently deleted. This action cannot be undone.
                 </p>
 
                 <div className="grid grid-cols-2 gap-3 pt-1">

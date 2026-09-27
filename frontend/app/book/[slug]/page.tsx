@@ -251,7 +251,7 @@ export default function RoyalStayCustomerWebsite() {
         price: r.price || 2500,
         image: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=800&q=80',
         specs: `Floor: ${r.floor || '1st Floor'} • Status: ${r.status}`,
-        description: `Room ${r.roomNumber} available for booking in database.`,
+        description: `Room ${r.roomNumber} available for instant online booking.`,
         rating: 4.9,
         reviewsCount: 100
       }))
@@ -882,7 +882,7 @@ export default function RoyalStayCustomerWebsite() {
                       className={`w-full bg-slate-50 border rounded-xl p-3.5 text-xs text-slate-900 font-semibold focus:outline-none transition-all ${
                         emailError ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-slate-300 focus:ring-2 focus:ring-amber-500'
                       }`} 
-                      placeholder="e.g. rahul@example.com"
+                      placeholder="e.g. rajjak5453@gmail.com"
                     />
                     {emailError && <p className="text-[11px] text-rose-600 font-bold mt-1">⚠️ {emailError}</p>}
                   </div>

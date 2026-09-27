@@ -43,5 +43,6 @@ public interface IReservationService
     Task<ApiResponse<ReservationDto>> CheckInAsync(string reservationId);
     Task<ApiResponse<ReservationDto>> CheckOutAsync(string reservationId);
     Task<ApiResponse<ReservationDto>> CancelReservationAsync(string reservationId);
+    Task<ApiResponse<ReservationDto>> UpdateReservationAsync(string reservationId, CreateReservationDto request);
     Task<ApiResponse<bool>> DeleteReservationAsync(string reservationId);
 }

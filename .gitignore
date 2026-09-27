@@ -15,7 +15,10 @@ obj/
 # Database files
 *.db
 *.sqlite
+*.db-shm
+*.db-wal
 hotelsaas.db
+scratch/
 
 # Logs & Environment
 *.log
@@ -23,3 +26,4 @@ hotelsaas.db
 .env.local
 .env.production
 .vercel
+

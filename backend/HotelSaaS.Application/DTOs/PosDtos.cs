@@ -23,8 +23,10 @@ public record PosOrderDto(
     Guid Id,
     string OrderNumber,
     Guid? ReservationId,
+    Guid? RoomId,
     string? RoomNumber,
     string? GuestName,
+    string? GuestPhone,
     string? TableNumber,
     string OrderType,
     decimal Subtotal,
@@ -52,13 +54,18 @@ public record CreatePosOrderDto(
     string? TableNumber,
     string OrderType, // RoomService, DineIn, Takeaway
     bool ChargeToRoom,
-    List<CreatePosOrderItemDto> Items
+    List<CreatePosOrderItemDto> Items,
+    string? RoomNumber = null,
+    string? CustomerName = null,
+    string? CustomerPhone = null
 );
 
 public record CreatePosOrderItemDto(
     Guid MenuItemId,
     int Quantity,
-    string? Notes
+    string? Notes,
+    string? ItemName = null,
+    decimal? UnitPrice = null
 );
 
 public record CreatePosMenuItemDto(

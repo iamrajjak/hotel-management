@@ -12,13 +12,33 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* Dark Mode Palette & Overrides */
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Dark Mode Palette & Custom Overrides */
 html.dark {
   color-scheme: dark;
 }
 
 html.dark body {
-  background-color: #0b0f19 !important;
+  background-color: #080c14 !important;
   color: #f8fafc !important;
 }
 
@@ -28,28 +48,31 @@ html.dark ::-webkit-scrollbar-track {
 html.dark ::-webkit-scrollbar-thumb {
   background: #334155;
 }
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
 
 html.dark main,
 html.dark header,
 html.dark sidebar,
 html.dark div.bg-white,
 html.dark div.bg-slate-50 {
-  background-color: #111827 !important;
+  background-color: #0f172a !important;
   color: #f9fafb !important;
-  border-color: #1f2937 !important;
+  border-color: #1e293b !important;
 }
 
 html.dark table thead {
-  background-color: #1f2937 !important;
+  background-color: #1e293b !important;
   color: #9ca3af !important;
 }
 
 html.dark table tbody tr {
-  border-color: #1f2937 !important;
+  border-color: #1e293b !important;
 }
 
 html.dark table tbody tr:hover {
-  background-color: #1e293b !important;
+  background-color: #1e293b/70 !important;
 }
 
 html.dark .text-slate-900,
@@ -65,13 +88,147 @@ html.dark .text-slate-500 {
 
 html.dark .bg-slate-100,
 html.dark .bg-slate-50\/80 {
-  background-color: #1f2937 !important;
+  background-color: #1e293b !important;
 }
 
 html.dark input,
 html.dark select,
 html.dark textarea {
-  background-color: #111827 !important;
+  background-color: #0f172a !important;
   color: #ffffff !important;
-  border-color: #374151 !important;
+  border-color: #334155 !important;
 }
+
+/* ==========================================================================
+   PREMIUM DESIGN SYSTEM UTILITIES (Glassmorphism, Glows, Micro-interactions)
+   ========================================================================== */
+
+/* Glassmorphism Panels */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+html.dark .glass-panel {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+}
+
+/* Card Micro-interactions */
+.ui-card-hover {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ui-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+}
+
+html.dark .ui-card-hover:hover {
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+}
+
+/* Interactive Buttons & Badges */
+.btn-modern-primary {
+  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.35);
+}
+
+.btn-modern-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px 0 rgba(79, 70, 229, 0.45);
+  filter: brightness(1.05);
+}
+
+.btn-modern-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px 0 rgba(79, 70, 229, 0.3);
+}
+
+.btn-modern-emerald {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.35);
+}
+
+.btn-modern-emerald:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px 0 rgba(16, 185, 129, 0.45);
+  filter: brightness(1.05);
+}
+
+/* Animated Glow Badges */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+.badge-glow-green {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+html.dark .badge-glow-green {
+  background: rgba(16, 185, 129, 0.18);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+}
+
+.badge-glow-indigo {
+  background: rgba(79, 70, 229, 0.12);
+  color: #4338ca;
+  border: 1px solid rgba(79, 70, 229, 0.3);
+}
+
+html.dark .badge-glow-indigo {
+  background: rgba(79, 70, 229, 0.2);
+  color: #818cf8;
+  border: 1px solid rgba(129, 140, 248, 0.35);
+}
+
+/* Input Focus Glow */
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+  border-color: #6366f1 !important;
+}
+
+/* Smooth Table Visuals */
+.modern-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.modern-table tr {
+  transition: background-color 0.15s ease;
+}
+
+/* Fade In Animations */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInScale 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+

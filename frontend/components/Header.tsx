@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { authApi, reservationApi } from '@/lib/api/services';
 import { 
@@ -48,6 +49,7 @@ export default function Header({
   const [allReservations, setAllReservations] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // Live Clock State
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
@@ -58,6 +60,7 @@ export default function Header({
   const [notificationList, setNotificationList] = useState<any[]>([]);
 
   useEffect(() => {
+    setMounted(true);
     // Sync theme mode preference
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('app_theme');
@@ -191,9 +194,20 @@ export default function Header({
   const displayUserRole = isSuperAdmin ? 'SUPERADMIN' : (userRole || currentUser?.role || 'HOTEL OWNER');
   const displayHotelName = hotelName || currentUser?.hotelName || 'Hotel Management System';
 
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [logoutMsg, setLogoutMsg] = useState('');
+
   const handleLogout = () => {
-    authApi.logout();
-    router.push('/login');
+    setShowLogoutConfirm(true);
+  };
+
+  const confirmLogoutAction = () => {
+    setShowLogoutConfirm(false);
+    setLogoutMsg('Successfully logged out. Redirecting to login portal...');
+    setTimeout(() => {
+      authApi.logout();
+      router.push('/login');
+    }, 800);
   };
 
   // Format Live Clock
@@ -211,10 +225,10 @@ export default function Header({
         {/* Mobile Hamburger Toggle */}
         <button
           onClick={onMenuClick}
-          className="md:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-          title="Open Menu"
+          className="md:hidden p-2.5 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-100 active:bg-slate-200 transition-colors touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center shrink-0"
+          title="Open Navigation Menu"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="w-6 h-6" />
         </button>
 
         <h2 className="text-sm sm:text-base font-black text-slate-900 tracking-tight truncate max-w-[140px] sm:max-w-[180px] hidden sm:block">{title}</h2>
@@ -316,7 +330,7 @@ export default function Header({
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none"
+            className="relative p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none touch-manipulation min-w-[40px] min-h-[40px]"
             title="Realtime Hotel Activity Notifications"
           >
             <Bell className="w-5 h-5" />
@@ -329,7 +343,7 @@ export default function Header({
 
           {/* NOTIFICATION DRAWER / POPOVER */}
           {showNotifications && (
-            <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white border border-slate-200 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in zoom-in-95 duration-150 text-xs">
+            <div className="fixed inset-x-4 top-18 md:absolute md:inset-auto md:right-0 md:top-full md:mt-2 w-auto md:w-96 bg-white border border-slate-200 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in zoom-in-95 duration-150 text-xs max-h-[85vh] flex flex-col">
               {/* Popover Header */}
               <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
                 <div className="flex items-center gap-2">
@@ -436,6 +450,50 @@ export default function Header({
           </button>
         </div>
       </div>
+
+      {/* Logout Toast Notification Popup */}
+      {logoutMsg && (
+        <div className="fixed top-20 right-6 bg-slate-900 text-white border border-indigo-500/30 px-5 py-3 rounded-2xl shadow-2xl z-50 flex items-center gap-3 animate-in slide-in-from-top-4 duration-200">
+          <div className="w-7 h-7 rounded-xl bg-indigo-600 flex items-center justify-center font-bold">✓</div>
+          <span className="text-xs font-bold">{logoutMsg}</span>
+        </div>
+      )}
+
+      {/* Custom Ultra-Premium Glassmorphic Logout Confirmation Modal */}
+      {showLogoutConfirm && mounted && createPortal(
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[999999] flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-slate-200/90 dark:border-slate-800 text-center space-y-5 animate-in zoom-in-95 duration-200 relative overflow-hidden my-auto">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="w-16 h-16 rounded-3xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/60 flex items-center justify-center mx-auto shadow-inner">
+              <LogOut className="w-8 h-8" />
+            </div>
+            <div className="space-y-1.5">
+              <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">Confirm Logout</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                Are you sure you want to log out of <strong className="text-slate-800 dark:text-slate-200 font-bold">{displayHotelName}</strong>?
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowLogoutConfirm(false)}
+                className="w-full py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-200/60 dark:border-slate-700"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmLogoutAction}
+                className="w-full py-3 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-rose-600/30 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </header>
   );
 }

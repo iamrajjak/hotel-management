@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
-import { reportApi } from '@/lib/api/services';
+import { reportApi, reservationApi, expenseApi, posApi } from '@/lib/api/services';
 import { 
   BarChart3, 
   TrendingUp, 
@@ -26,6 +26,7 @@ export default function ReportsPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [reportData, setReportData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Date Filters
   const [rangePreset, setRangePreset] = useState<'today' | '7days' | 'month' | 'custom'>('month');
@@ -53,16 +54,47 @@ export default function ReportsPage() {
   async function loadReportData() {
     setLoading(true);
     try {
-      const [pnlRes, staffRes, occRes, restRes, bookRes] = await Promise.all([
+      const [pnlRes, staffRes, occRes, restRes, bookRes, rawRes, rawExp, rawOrders] = await Promise.all([
         reportApi.getPnlReport(startDate, endDate),
         reportApi.getStaffReport(startDate, endDate),
         reportApi.getOccupancyReport(startDate, endDate),
         reportApi.getRestaurantReport(startDate, endDate),
         reportApi.getBookingReport(startDate, endDate),
+        reservationApi.getReservations(),
+        expenseApi.getExpenses(),
+        posApi.getOrders(),
       ]);
 
+      const resList = Array.isArray(rawRes?.data) ? rawRes.data : [];
+      const expList = Array.isArray(rawExp?.data) ? rawExp.data : [];
+      const orderList = Array.isArray(rawOrders?.data) ? rawOrders.data : [];
+
+      const pnlData = pnlRes?.data || {};
+
+      const liveRoomRev = resList.length > 0
+        ? resList
+            .filter((r: any) => r.bookingStatus !== 'Cancelled' && r.bookingStatus !== '4')
+            .reduce((sum: number, r: any) => sum + (r.paidAmount || r.totalAmount || 0), 0)
+        : (pnlData.roomRevenue ?? pnlData.totalRoomRevenue ?? 0);
+
+      const liveRestRev = orderList.length > 0
+        ? orderList.reduce((sum: number, o: any) => sum + (o.total || 0), 0)
+        : (pnlData.restaurantRevenue ?? pnlData.totalRestaurantRevenue ?? 0);
+
+      const liveExpenses = expList.length > 0
+        ? expList.reduce((sum: number, e: any) => sum + (e.amount || 0), 0)
+        : (pnlData.totalExpenses ?? 0);
+
+      const liveGrossRev = (liveRoomRev + liveRestRev) || (pnlData.totalRevenue ?? 0);
+      const liveNetProfit = liveGrossRev - liveExpenses;
+
       const combined: any = {
-        ...(pnlRes?.data || {}),
+        ...pnlData,
+        totalRoomRevenue: liveRoomRev,
+        totalRestaurantRevenue: liveRestRev,
+        totalExpenses: liveExpenses,
+        netProfit: liveNetProfit,
+        totalRevenue: liveGrossRev,
         // Staff Report Fields
         totalStaffCount: staffRes?.data?.totalStaff || staffRes?.data?.activeStaff || 0,
         activeStaffCount: staffRes?.data?.activeStaff || 0,
@@ -81,11 +113,11 @@ export default function ReportsPage() {
         // Booking Fields
         totalBookings: bookRes?.data?.totalBookings || 0,
         // Restaurant Fields
-        totalKotOrders: restRes?.data?.totalOrders || 0,
+        totalKotOrders: restRes?.data?.totalOrders || orderList.length,
         dineInOrders: restRes?.data?.dineInOrders || 0,
         roomServiceOrders: restRes?.data?.roomServiceOrders || 0,
         takeawayOrders: restRes?.data?.takeawayOrders || 0,
-        totalRestaurantSales: restRes?.data?.totalRestaurantSales || pnlRes?.data?.restaurantRevenue || 0,
+        totalRestaurantSales: liveRestRev,
       };
 
       setReportData(combined);
@@ -100,10 +132,10 @@ export default function ReportsPage() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
-      <Sidebar userRole={currentUser?.role || 'HotelOwner'} />
+      <Sidebar userRole={currentUser?.role || 'HotelOwner'} isOpenMobile={isMobileOpen} onCloseMobile={() => setIsMobileOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header title="Executive Business Reports & Analytics" />
+        <Header title="Executive Business Reports & Analytics" onMenuClick={() => setIsMobileOpen(true)} />
 
         <main className="p-4 sm:p-8 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
           {/* Executive Dark Blue Analytics Hero Banner */}
@@ -238,7 +270,7 @@ export default function ReportsPage() {
                 <div className="flex justify-between items-center border-b border-slate-100 pb-4">
                   <h3 className="font-extrabold text-slate-900 text-base">Statement of Income & Expenditure</h3>
                   <span className="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">
-                    Strict Multi-Tenant Database Derived
+                    Strict Verified Financial Records
                   </span>
                 </div>
 

@@ -84,7 +84,7 @@ export default function SaaSAdminPortalPage() {
       });
 
       if (res.success) {
-        setOnboardMsg(`Hotel "${newHotelName}" onboarded successfully into Database!`);
+        setOnboardMsg(`Hotel "${newHotelName}" onboarded successfully!`);
         await loadAllHotels();
         setTimeout(() => {
           setOnboardMsg('');
@@ -127,7 +127,7 @@ export default function SaaSAdminPortalPage() {
               </div>
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Multi-Tenant Hotel SaaS Engine</h1>
               <p className="text-slate-400 text-xs sm:text-sm mt-1">
-                Manage hotel clients, subscriptions, tenant database isolation, and platform MRR revenue.
+                Manage hotel clients, subscriptions, tenant isolation, and platform MRR revenue.
               </p>
             </div>
 
@@ -142,10 +142,10 @@ export default function SaaSAdminPortalPage() {
           {/* SaaS Revenue Metrics */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
             {[
-              { label: 'Total Hotel Clients', val: hotels.length, color: 'text-amber-400', icon: Building2, sub: 'Database Tenants' },
+              { label: 'Total Hotel Clients', val: hotels.length, color: 'text-amber-400', icon: Building2, sub: 'Hotel Clients' },
               { label: 'Active Subscriptions', val: `${hotels.filter(h => h.status === 'Active' || !h.status).length} Active`, color: 'text-emerald-400', icon: CheckCircle, sub: 'Live Tenants' },
               { label: 'Monthly Revenue (MRR)', val: `₹${(hotels.length * 2999).toLocaleString()}`, color: 'text-amber-300', icon: TrendingUp, sub: 'Estimated MRR' },
-              { label: 'Platform Database', val: 'Connected', color: 'text-purple-400', icon: Globe, sub: 'Turso SQLite DB' }
+              { label: 'Platform Engine', val: 'Connected', color: 'text-purple-400', icon: Globe, sub: 'Cloud Engine' }
             ].map((stat, idx) => {
               const Icon = stat.icon;
               return (
@@ -212,15 +212,15 @@ export default function SaaSAdminPortalPage() {
                 <h3 className="font-extrabold text-white text-base flex items-center gap-2">
                   <Building2 className="w-5 h-5 text-amber-400" /> Hotel Tenants Directory
                 </h3>
-                <p className="text-slate-400 text-xs">Complete list of registered SaaS hotel clients in Database</p>
+                <p className="text-slate-400 text-xs">Complete list of registered SaaS hotel clients</p>
               </div>
             </div>
 
             <div className="overflow-x-auto">
               {loading ? (
-                <div className="text-center py-8 text-slate-400 text-xs font-bold animate-pulse">Loading database tenants...</div>
+                <div className="text-center py-8 text-slate-400 text-xs font-bold animate-pulse">Loading hotel clients...</div>
               ) : hotels.length === 0 ? (
-                <div className="text-center py-8 text-slate-400 text-xs font-bold">No hotel tenants in database yet. Onboard your first hotel above!</div>
+                <div className="text-center py-8 text-slate-400 text-xs font-bold">No hotel clients found. Onboard your first hotel above!</div>
               ) : (
                 <table className="w-full text-left text-xs text-slate-300 min-w-[700px]">
                   <thead className="bg-slate-950 text-[10px] uppercase font-black text-slate-400 border-b border-slate-800">
@@ -325,7 +325,7 @@ export default function SaaSAdminPortalPage() {
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Ramesh Verma"
+                        placeholder="e.g. Rajjak Khan"
                         value={newOwnerName}
                         onChange={(e) => setNewOwnerName(e.target.value)}
                         className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-white font-semibold focus:outline-none focus:border-amber-500"
@@ -336,7 +336,7 @@ export default function SaaSAdminPortalPage() {
                       <input
                         type="email"
                         required
-                        placeholder="owner@seabreeze.com"
+                        placeholder="rajjak5453@gmail.com"
                         value={newOwnerEmail}
                         onChange={(e) => setNewOwnerEmail(e.target.value)}
                         className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3.5 text-white font-semibold focus:outline-none focus:border-amber-500"

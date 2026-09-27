@@ -17,7 +17,8 @@ import {
   FileText, 
   X,
   TrendingDown,
-  Sparkles
+  Sparkles,
+  Loader2
 } from 'lucide-react';
 
 interface Expense {
@@ -40,6 +41,8 @@ export default function ExpensesPage() {
   const [accessDenied, setAccessDenied] = useState(false);
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [isSavingExpense, setIsSavingExpense] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Form State
   const [category, setCategory] = useState('Utilities');
@@ -59,11 +62,6 @@ export default function ExpensesPage() {
         try {
           const user = JSON.parse(stored);
           setCurrentUser(user);
-          if (user.role === 'StaffManager') {
-            setAccessDenied(true);
-            setLoading(false);
-            return;
-          }
         } catch {}
       }
     }
@@ -91,8 +89,10 @@ export default function ExpensesPage() {
 
   const handleCreateExpense = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSavingExpense) return;
     setErrorMsg('');
     setSuccessMsg('');
+    setIsSavingExpense(true);
 
     try {
       const res = await expenseApi.createExpense({
@@ -111,12 +111,14 @@ export default function ExpensesPage() {
         setAmount('');
         setVendorName('');
         setReceiptNumber('');
-        loadExpenses();
+        await loadExpenses();
       } else {
         setErrorMsg(res.message || (res.errors && res.errors.length > 0 ? res.errors.join(', ') : 'Failed to create expense entry'));
       }
     } catch (err: any) {
       setErrorMsg(err?.message || 'Error saving expense');
+    } finally {
+      setIsSavingExpense(false);
     }
   };
 
@@ -145,10 +147,10 @@ export default function ExpensesPage() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900 font-sans">
-      <Sidebar userRole={currentUser?.role || 'HotelOwner'} />
+      <Sidebar userRole={currentUser?.role || 'HotelOwner'} isOpenMobile={isMobileOpen} onCloseMobile={() => setIsMobileOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <Header title="Expense Management & Outflow Tracking" />
+        <Header title="Expense Management & Outflow Tracking" onMenuClick={() => setIsMobileOpen(true)} />
 
         <main className="p-4 sm:p-8 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
           {/* ACCESS DENIED BANNER FOR STAFF MANAGER */}
@@ -182,7 +184,7 @@ export default function ExpensesPage() {
                       <TrendingDown className="w-3.5 h-3.5 text-rose-300" /> Operational Expense Controls
                     </span>
                     <span className="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-bold border border-rose-400/30">
-                      Owner Only
+                      Staff & Owner Access
                     </span>
                   </div>
 
@@ -387,9 +389,10 @@ export default function ExpensesPage() {
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white font-extrabold text-xs uppercase tracking-widest py-3.5 rounded-xl shadow-lg shadow-rose-600/25 transition-all mt-4"
+                disabled={isSavingExpense}
+                className="w-full bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white font-extrabold text-xs uppercase tracking-widest py-3.5 rounded-xl shadow-lg shadow-rose-600/25 transition-all mt-4 flex items-center justify-center gap-2"
               >
-                Confirm & Log Expense
+                {isSavingExpense ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Confirm & Log Expense'}
               </button>
             </form>
           </div>
@@ -430,7 +433,7 @@ export default function ExpensesPage() {
             </div>
 
             <p className="text-[11px] text-rose-600 font-bold bg-rose-50 p-3 rounded-xl border border-rose-200/80">
-              ⚠️ This item will be permanently removed from your local database and live Turso Cloud database.
+              ⚠️ This item will be permanently removed. This action cannot be undone.
             </p>
 
             <div className="grid grid-cols-2 gap-3 pt-1">

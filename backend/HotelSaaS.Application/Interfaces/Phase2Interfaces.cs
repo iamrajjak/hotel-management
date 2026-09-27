@@ -9,7 +9,7 @@ public interface ICustomerService
     Task<ApiResponse<CustomerDto>> GetCustomerByIdAsync(Guid id);
     Task<ApiResponse<CustomerDto>> CreateCustomerAsync(CreateCustomerDto request);
     Task<ApiResponse<CustomerDto>> UpdateCustomerAsync(Guid id, CreateCustomerDto request);
-    Task<ApiResponse<bool>> DeleteCustomerAsync(Guid id);
+    Task<ApiResponse<bool>> DeleteCustomerAsync(string id);
 }
 
 public interface ICalendarService
