@@ -535,18 +535,18 @@ export default function RoyalStayDashboard() {
 
             {/* Visual Bar Chart Grid */}
             <div className="space-y-4 relative z-10">
-              <div className="flex gap-2 sm:gap-4 items-stretch">
-                {/* Left Y-Axis Scale Labels Column (High Contrast Badges) */}
-                <div className="flex flex-col justify-between pb-8 pt-4 text-[10px] sm:text-[11px] font-extrabold font-mono select-none text-right pr-1 min-w-[85px] sm:min-w-[105px] pointer-events-none">
+              <div className="flex gap-1 sm:gap-4 items-stretch w-full">
+                {/* Left Y-Axis Scale Labels Column (Visible on sm+ screens) */}
+                <div className="hidden sm:flex flex-col justify-between pb-10 pt-4 text-[11px] font-extrabold font-mono select-none text-right pr-1 min-w-[105px] pointer-events-none">
                   <span className="px-2.5 py-1 rounded-lg bg-indigo-500/25 text-indigo-200 border border-indigo-400/40 inline-block font-sans shadow-xs">100% Occupancy</span>
                   <span className="px-2.5 py-1 rounded-lg bg-white/10 text-slate-300 border border-white/15 inline-block font-sans">50% Occupancy</span>
                   <span className="px-2.5 py-1 rounded-lg bg-white/5 text-slate-400 border border-white/10 inline-block font-sans">0% Occupancy</span>
                 </div>
 
                 {/* Main Bar Chart Container */}
-                <div className="flex-1 h-52 sm:h-60 pt-6 pb-2 px-3 sm:px-4 flex items-end justify-between gap-2 sm:gap-4 relative border-b border-indigo-800/80 bg-slate-950/50 backdrop-blur-md rounded-2xl border border-indigo-800/40">
+                <div className="flex-1 min-w-0 h-56 sm:h-64 pt-6 pb-2 px-1 sm:px-4 flex items-end justify-between gap-0.5 sm:gap-3 relative border-b border-indigo-800/80 bg-slate-950/50 backdrop-blur-md rounded-2xl border border-indigo-800/40">
                   {/* Background Grid Lines */}
-                  <div className="absolute inset-x-0 top-6 bottom-10 flex flex-col justify-between pointer-events-none z-0">
+                  <div className="absolute inset-x-0 top-6 bottom-12 flex flex-col justify-between pointer-events-none z-0">
                     <div className="border-b border-dashed border-indigo-500/30 w-full"></div>
                     <div className="border-b border-dashed border-indigo-800/50 w-full"></div>
                     <div className="border-b border-dashed border-indigo-800/30 w-full"></div>
@@ -554,8 +554,9 @@ export default function RoyalStayDashboard() {
 
                   {tenDaysData.map((d: any, idx: number) => {
                     const barHeight = Math.max(14, Math.min(100, d.occPct));
+                    const labelParts = d.label.split(' ');
                     return (
-                      <div key={idx} className="flex-1 flex flex-col items-center h-full justify-end group relative z-10">
+                      <div key={idx} className="flex-1 min-w-0 flex flex-col items-center h-full justify-end group relative z-10">
                         {/* Floating Tooltip */}
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none absolute -top-14 bg-slate-900 text-white text-[11px] py-2 px-3.5 rounded-xl shadow-2xl whitespace-nowrap z-30 font-sans border border-indigo-500/40 backdrop-blur-md">
                           <p className="font-black text-indigo-300">{d.label} {d.isToday ? '(Today)' : ''}</p>
@@ -566,7 +567,7 @@ export default function RoyalStayDashboard() {
                         </div>
 
                         {/* Bar Track & Glowing Gradient Fill */}
-                        <div className="w-full max-w-[24px] sm:max-w-[32px] bg-slate-900/80 rounded-2xl overflow-hidden h-full flex items-end p-1 border border-indigo-800/50 transition-all group-hover:bg-indigo-950/90 group-hover:border-indigo-500/70">
+                        <div className="w-full max-w-[14px] sm:max-w-[32px] bg-slate-900/80 rounded-2xl overflow-hidden h-full flex items-end p-0.5 sm:p-1 border border-indigo-800/50 transition-all group-hover:bg-indigo-950/90 group-hover:border-indigo-500/70">
                           <div 
                             className={`w-full rounded-xl transition-all duration-500 relative ${
                               d.isToday 
@@ -576,18 +577,20 @@ export default function RoyalStayDashboard() {
                             style={{ height: `${barHeight}%` }}
                           >
                             {d.isToday && (
-                              <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-cyan-300 rounded-full animate-ping pointer-events-none"></span>
+                              <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-2 h-2 bg-cyan-300 rounded-full animate-ping pointer-events-none"></span>
                             )}
                           </div>
                         </div>
 
                         {/* Date Label */}
-                        <span className={`text-[11px] font-extrabold mt-2 ${d.isToday ? 'text-cyan-300' : 'text-slate-300'}`}>
-                          {d.label.split(' ')[0]}
-                        </span>
-                        <span className="text-[9px] text-slate-400 font-medium">
-                          {d.label.split(' ')[1]}
-                        </span>
+                        <div className="flex flex-col items-center mt-1.5 text-center pointer-events-none min-w-0 w-full overflow-hidden">
+                          <span className={`text-[9px] sm:text-[11px] font-black leading-none truncate ${d.isToday ? 'text-cyan-300 font-extrabold' : 'text-slate-200'}`}>
+                            {labelParts[0]}
+                          </span>
+                          <span className="text-[7.5px] sm:text-[9px] text-slate-400 font-semibold leading-tight mt-0.5 truncate">
+                            {labelParts[1]}
+                          </span>
+                        </div>
                       </div>
                     );
                   })}
